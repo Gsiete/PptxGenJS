@@ -1652,7 +1652,7 @@ function makeValAxis(opts: IChartOptsLib, valAxisId: string): string {
 	let axisPos = valAxisId === AXIS_ID_VALUE_PRIMARY ? (opts.barDir === 'col' ? 'l' : 'b') : opts.barDir !== 'col' ? 'r' : 't'
 	let strXml = ''
 	let isRight = axisPos === 'r' || axisPos === 't'
-	let crosses = isRight ? 'max' : 'autoZero'
+	let crosses = isRight ? 'max' : (opts.valAxisCrossesAt || 'autoZero')
 	let crossAxId = valAxisId === AXIS_ID_VALUE_PRIMARY ? AXIS_ID_CATEGORY_PRIMARY : AXIS_ID_CATEGORY_SECONDARY
 
 	strXml += '<c:valAx>'

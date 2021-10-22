@@ -1,4 +1,4 @@
-/* PptxGenJS 3.9.0-beta @ 2021-10-01T03:13:35.870Z */
+/* PptxGenJS 3.9.0-beta @ 2021-10-22T11:38:51.206Z */
 import JSZip from 'jszip';
 
 /*! *****************************************************************************
@@ -5995,7 +5995,7 @@ function makeValAxis(opts, valAxisId) {
     var axisPos = valAxisId === AXIS_ID_VALUE_PRIMARY ? (opts.barDir === 'col' ? 'l' : 'b') : opts.barDir !== 'col' ? 'r' : 't';
     var strXml = '';
     var isRight = axisPos === 'r' || axisPos === 't';
-    var crosses = isRight ? 'max' : 'autoZero';
+    var crosses = isRight ? 'max' : (opts.valAxisCrossesAt || 'autoZero');
     var crossAxId = valAxisId === AXIS_ID_VALUE_PRIMARY ? AXIS_ID_CATEGORY_PRIMARY : AXIS_ID_CATEGORY_SECONDARY;
     strXml += '<c:valAx>';
     strXml += '  <c:axId val="' + valAxisId + '"/>';
