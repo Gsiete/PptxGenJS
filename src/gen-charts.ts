@@ -750,6 +750,10 @@ function makeChartType(chartType: CHART_NAME, data: OptsChartData[], opts: IChar
 					strXml += '        <a:defRPr b="' + (opts.dataLabelFontBold ? 1 : 0) + '" i="' + (opts.dataLabelFontItalic ? 1 : 0) + '" strike="noStrike" sz="' + Math.round((opts.dataLabelFontSize || DEF_FONT_SIZE) * 100) + '" u="none">'
 					strXml += '          <a:solidFill>' + createColorElement(opts.dataLabelColors?.[idx] || opts.dataLabelColor || DEF_FONT_COLOR) + '</a:solidFill>'
 					strXml += '          <a:latin typeface="' + (opts.dataLabelFontFace || 'Arial') + '"/>'
+					// ToDo: make this work
+					// if (opts.dataLabelShadows?.[idx] || opts.dataLabelShadow) {
+					// 	strXml += createShadowElement(opts.dataLabelShadows?.[idx] || opts.dataLabelShadow, DEF_SHAPE_SHADOW)
+					// }
 					strXml += '        </a:defRPr>'
 					strXml += '      </a:pPr></a:p>'
 					strXml += '    </c:txPr>'
@@ -1455,6 +1459,15 @@ function makeChartType(chartType: CHART_NAME, data: OptsChartData[], opts: IChar
 				strXml += `   <a:defRPr sz="${Math.round((opts.dataLabelFontSize || DEF_FONT_SIZE) * 100)}" b="${opts.dataLabelFontBold ? 1 : 0}" i="${opts.dataLabelFontItalic ? 1 : 0}" u="none" strike="noStrike">`
 				strXml += '    <a:solidFill>' + createColorElement(opts.dataLabelColors?.[idx] || opts.dataLabelColor || DEF_FONT_COLOR) + '</a:solidFill>'
 				strXml += `    <a:latin typeface="${opts.dataLabelFontFace || 'Arial'}"/>`
+				// ToDo: make this work
+				// const shadowOpts = opts.dataLabelShadows?.[idx] || opts.dataLabelShadow;
+				// if (shadowOpts) {
+				// 	correctShadowOptions(shadowOpts)
+				// 	const shadowStr = createShadowElement(shadowOpts, DEF_SHAPE_SHADOW)
+				// 	console.log(_label)
+				// 	console.log(shadowStr)
+				// 	strXml += shadowStr
+				// }
 				strXml += '   </a:defRPr>'
 				strXml += '      </a:pPr></a:p>'
 				strXml += '    </c:txPr>'
@@ -1863,13 +1876,13 @@ function getExcelColName(length: number): string {
 
 /**
  * Creates `a:innerShdw` or `a:outerShdw` depending on pass options `opts`.
- * @param {Object} opts optional shadow properties
+ * @param {Object} options optional shadow properties
  * @param {Object} defaults defaults for unspecified properties in `opts`
  * @see http://officeopenxml.com/drwSp-effects.php
  * @example { type: 'outer', blur: 3, offset: (23000 / 12700), angle: 90, color: '000000', opacity: 0.35, rotateWithShape: true };
  * @return {string} XML
  */
-function createShadowElement(options: ShadowProps, defaults: object): string {
+function createShadowElement(options: ShadowProps, defaults: ShadowProps): string {
 	if (!options) {
 		return '<a:effectLst/>'
 	} else if (typeof options !== 'object') {

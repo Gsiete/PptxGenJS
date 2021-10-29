@@ -1175,6 +1175,7 @@ function genSlide13(pptx) {
 		chartColors: ["FC0000", "FFCC00", "009900", "0088CC", "696969", "6600CC"],
 		dataBorder: { pt: "2", color: "F1F1F1" },
 		dataLabelColor: "FFFFFF",
+		dataLabelColors: ["000000", "FFFFFF", "000000", "FFFFFF", "FFFFFF", "FFFFFF"],
 		dataLabelFontSize: 14,
 
 		legendPos: "r",

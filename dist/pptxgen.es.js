@@ -1,4 +1,4 @@
-/* PptxGenJS 3.9.0-beta @ 2021-10-29T21:00:11.629Z */
+/* PptxGenJS 3.9.0-beta @ 2021-10-29T21:02:06.135Z */
 import JSZip from 'jszip';
 
 /*! *****************************************************************************
@@ -5134,6 +5134,10 @@ function makeChartType(chartType, data, opts, valAxisId, catAxisId, isMultiTypeC
                     strXml += '        <a:defRPr b="' + (opts.dataLabelFontBold ? 1 : 0) + '" i="' + (opts.dataLabelFontItalic ? 1 : 0) + '" strike="noStrike" sz="' + Math.round((opts.dataLabelFontSize || DEF_FONT_SIZE) * 100) + '" u="none">';
                     strXml += '          <a:solidFill>' + createColorElement(((_a = opts.dataLabelColors) === null || _a === void 0 ? void 0 : _a[idx]) || opts.dataLabelColor || DEF_FONT_COLOR) + '</a:solidFill>';
                     strXml += '          <a:latin typeface="' + (opts.dataLabelFontFace || 'Arial') + '"/>';
+                    // ToDo: make this work
+                    // if (opts.dataLabelShadows?.[idx] || opts.dataLabelShadow) {
+                    // 	strXml += createShadowElement(opts.dataLabelShadows?.[idx] || opts.dataLabelShadow, DEF_SHAPE_SHADOW)
+                    // }
                     strXml += '        </a:defRPr>';
                     strXml += '      </a:pPr></a:p>';
                     strXml += '    </c:txPr>';
@@ -5797,6 +5801,15 @@ function makeChartType(chartType, data, opts, valAxisId, catAxisId, isMultiTypeC
                 strXml += "   <a:defRPr sz=\"" + Math.round((opts.dataLabelFontSize || DEF_FONT_SIZE) * 100) + "\" b=\"" + (opts.dataLabelFontBold ? 1 : 0) + "\" i=\"" + (opts.dataLabelFontItalic ? 1 : 0) + "\" u=\"none\" strike=\"noStrike\">";
                 strXml += '    <a:solidFill>' + createColorElement(((_a = opts.dataLabelColors) === null || _a === void 0 ? void 0 : _a[idx]) || opts.dataLabelColor || DEF_FONT_COLOR) + '</a:solidFill>';
                 strXml += "    <a:latin typeface=\"" + (opts.dataLabelFontFace || 'Arial') + "\"/>";
+                // ToDo: make this work
+                // const shadowOpts = opts.dataLabelShadows?.[idx] || opts.dataLabelShadow;
+                // if (shadowOpts) {
+                // 	correctShadowOptions(shadowOpts)
+                // 	const shadowStr = createShadowElement(shadowOpts, DEF_SHAPE_SHADOW)
+                // 	console.log(_label)
+                // 	console.log(shadowStr)
+                // 	strXml += shadowStr
+                // }
                 strXml += '   </a:defRPr>';
                 strXml += '      </a:pPr></a:p>';
                 strXml += '    </c:txPr>';
@@ -6182,7 +6195,7 @@ function getExcelColName(length) {
 }
 /**
  * Creates `a:innerShdw` or `a:outerShdw` depending on pass options `opts`.
- * @param {Object} opts optional shadow properties
+ * @param {Object} options optional shadow properties
  * @param {Object} defaults defaults for unspecified properties in `opts`
  * @see http://officeopenxml.com/drwSp-effects.php
  * @example { type: 'outer', blur: 3, offset: (23000 / 12700), angle: 90, color: '000000', opacity: 0.35, rotateWithShape: true };

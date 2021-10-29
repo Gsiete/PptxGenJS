@@ -163,6 +163,11 @@ export interface ShadowProps {
 	 * @example 'FF3399'
 	 */
 	color?: HexColor
+	/**
+	 * rotateWithShape
+	 * @example true
+	 */
+	rotateWithShape?: boolean
 }
 // used by: shape, table, text
 export interface ShapeFillProps {
@@ -1262,6 +1267,8 @@ export interface IChartPropsDataLabel {
 	dataLabelColor?: string
 	dataLabelColors?: string[]
 	dataLabelFontBold?: boolean
+	dataLabelShadow?: ShadowProps
+	dataLabelShadows?: ShadowProps[]
 	dataLabelFontFace?: string
 	dataLabelFontItalic?: boolean
 	dataLabelFontSize?: number
