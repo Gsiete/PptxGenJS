@@ -1,4 +1,4 @@
-/* PptxGenJS 3.9.0-beta @ 2021-10-22T11:38:51.201Z */
+/* PptxGenJS 3.9.0-beta @ 2021-10-29T15:57:55.509Z */
 'use strict';
 
 var JSZip = require('jszip');
@@ -2391,7 +2391,7 @@ function genXmlTextRunProperties(opts, isDefault) {
     var runPropsTag = isDefault ? 'a:defRPr' : 'a:rPr';
     // BEGIN runProperties (ex: `<a:rPr lang="en-US" sz="1600" b="1" dirty="0">`)
     runProps += '<' + runPropsTag + ' lang="' + (opts.lang ? opts.lang : 'en-US') + '"' + (opts.lang ? ' altLang="en-US"' : '');
-    runProps += opts.fontSize ? ' sz="' + Math.round(opts.fontSize) + '00"' : ''; // NOTE: Use round so sizes like '7.5' wont cause corrupt pres.
+    runProps += opts.fontSize ? ' sz="' + Math.round(opts.fontSize * 100) + '"' : ''; // NOTE: Use round so sizes like '7.5' wont cause corrupt pres.
     runProps += opts.hasOwnProperty('bold') ? " b=\"" + (opts.bold ? 1 : 0) + "\"" : '';
     runProps += opts.hasOwnProperty('italic') ? " i=\"" + (opts.italic ? 1 : 0) + "\"" : '';
     runProps += opts.hasOwnProperty('strike') ? " strike=\"" + (typeof opts.strike === 'string' ? opts.strike : 'sngStrike') + "\"" : '';
