@@ -11,7 +11,7 @@
  */
 
 import { execGenSlidesFuncs, runEveryTest } from "../modules/demos.mjs";
-import pptxgen from "pptxgenjs";
+import pptxgen from "../../dist/pptxgen.cjs.js";
 
 // ============================================================================
 
