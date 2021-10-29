@@ -1,4 +1,4 @@
-/* PptxGenJS 3.9.0-beta @ 2021-10-29T15:57:55.509Z */
+/* PptxGenJS 3.9.0-beta @ 2021-10-29T21:00:11.622Z */
 'use strict';
 
 var JSZip = require('jszip');
@@ -3201,37 +3201,37 @@ function makeXmlViewProps() {
 }
 /**
  * Checks shadow options passed by user and performs corrections if needed.
- * @param {ShadowProps} ShadowProps - shadow options
+ * @param {ShadowProps} shadowProps - shadow options
  */
-function correctShadowOptions(ShadowProps) {
-    if (!ShadowProps || typeof ShadowProps !== 'object') {
+function correctShadowOptions(shadowProps) {
+    if (!shadowProps || typeof shadowProps !== 'object') {
         //console.warn("`shadow` options must be an object. Ex: `{shadow: {type:'none'}}`")
         return;
     }
     // OPT: `type`
-    if (ShadowProps.type !== 'outer' && ShadowProps.type !== 'inner' && ShadowProps.type !== 'none') {
+    if (shadowProps.type !== 'outer' && shadowProps.type !== 'inner' && shadowProps.type !== 'none') {
         console.warn('Warning: shadow.type options are `outer`, `inner` or `none`.');
-        ShadowProps.type = 'outer';
+        shadowProps.type = 'outer';
     }
     // OPT: `angle`
-    if (ShadowProps.angle) {
+    if (shadowProps.angle) {
         // A: REALITY-CHECK
-        if (isNaN(Number(ShadowProps.angle)) || ShadowProps.angle < 0 || ShadowProps.angle > 359) {
+        if (isNaN(Number(shadowProps.angle)) || shadowProps.angle < 0 || shadowProps.angle > 359) {
             console.warn('Warning: shadow.angle can only be 0-359');
-            ShadowProps.angle = 270;
+            shadowProps.angle = 270;
         }
         // B: ROBUST: Cast any type of valid arg to int: '12', 12.3, etc. -> 12
-        ShadowProps.angle = Math.round(Number(ShadowProps.angle));
+        shadowProps.angle = Math.round(Number(shadowProps.angle));
     }
     // OPT: `opacity`
-    if (ShadowProps.opacity) {
+    if (shadowProps.opacity) {
         // A: REALITY-CHECK
-        if (isNaN(Number(ShadowProps.opacity)) || ShadowProps.opacity < 0 || ShadowProps.opacity > 1) {
+        if (isNaN(Number(shadowProps.opacity)) || shadowProps.opacity < 0 || shadowProps.opacity > 1) {
             console.warn('Warning: shadow.opacity can only be 0-1');
-            ShadowProps.opacity = 0.75;
+            shadowProps.opacity = 0.75;
         }
         // B: ROBUST: Cast any type of valid arg to int: '12', 12.3, etc. -> 12
-        ShadowProps.opacity = Number(ShadowProps.opacity);
+        shadowProps.opacity = Number(shadowProps.opacity);
     }
 }
 
@@ -5077,6 +5077,7 @@ function makeChartType(chartType, data, opts, valAxisId, catAxisId, isMultiTypeC
             */
             var colorIndex_1 = -1; // Maintain the color index by region
             data.forEach(function (obj) {
+                var _a;
                 colorIndex_1++;
                 var idx = obj.index;
                 strXml += '<c:ser>';
@@ -5137,7 +5138,7 @@ function makeChartType(chartType, data, opts, valAxisId, catAxisId, isMultiTypeC
                     strXml += '      <a:lstStyle/>';
                     strXml += '      <a:p><a:pPr>';
                     strXml += '        <a:defRPr b="' + (opts.dataLabelFontBold ? 1 : 0) + '" i="' + (opts.dataLabelFontItalic ? 1 : 0) + '" strike="noStrike" sz="' + Math.round((opts.dataLabelFontSize || DEF_FONT_SIZE) * 100) + '" u="none">';
-                    strXml += '          <a:solidFill>' + createColorElement(opts.dataLabelColor || DEF_FONT_COLOR) + '</a:solidFill>';
+                    strXml += '          <a:solidFill>' + createColorElement(((_a = opts.dataLabelColors) === null || _a === void 0 ? void 0 : _a[idx]) || opts.dataLabelColor || DEF_FONT_COLOR) + '</a:solidFill>';
                     strXml += '          <a:latin typeface="' + (opts.dataLabelFontFace || 'Arial') + '"/>';
                     strXml += '        </a:defRPr>';
                     strXml += '      </a:pPr></a:p>';
@@ -5792,6 +5793,7 @@ function makeChartType(chartType, data, opts, valAxisId, catAxisId, isMultiTypeC
             // 3: "Data Label" block for every data Label
             strXml += '<c:dLbls>';
             obj.labels.forEach(function (_label, idx) {
+                var _a;
                 strXml += '<c:dLbl>';
                 strXml += " <c:idx val=\"" + idx + "\"/>";
                 strXml += "  <c:numFmt formatCode=\"" + (opts.dataLabelFormatCode || 'General') + "\" sourceLinked=\"0\"/>";
@@ -5799,7 +5801,7 @@ function makeChartType(chartType, data, opts, valAxisId, catAxisId, isMultiTypeC
                 strXml += '   <a:bodyPr/><a:lstStyle/>';
                 strXml += '   <a:p><a:pPr>';
                 strXml += "   <a:defRPr sz=\"" + Math.round((opts.dataLabelFontSize || DEF_FONT_SIZE) * 100) + "\" b=\"" + (opts.dataLabelFontBold ? 1 : 0) + "\" i=\"" + (opts.dataLabelFontItalic ? 1 : 0) + "\" u=\"none\" strike=\"noStrike\">";
-                strXml += '    <a:solidFill>' + createColorElement(opts.dataLabelColor || DEF_FONT_COLOR) + '</a:solidFill>';
+                strXml += '    <a:solidFill>' + createColorElement(((_a = opts.dataLabelColors) === null || _a === void 0 ? void 0 : _a[idx]) || opts.dataLabelColor || DEF_FONT_COLOR) + '</a:solidFill>';
                 strXml += "    <a:latin typeface=\"" + (opts.dataLabelFontFace || 'Arial') + "\"/>";
                 strXml += '   </a:defRPr>';
                 strXml += '      </a:pPr></a:p>';
