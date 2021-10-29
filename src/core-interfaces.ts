@@ -1260,6 +1260,7 @@ export interface IChartPropsChartRadar {
 export interface IChartPropsDataLabel {
 	dataLabelBkgrdColors?: boolean
 	dataLabelColor?: string
+	dataLabelColors?: string[]
 	dataLabelFontBold?: boolean
 	dataLabelFontFace?: string
 	dataLabelFontItalic?: boolean
