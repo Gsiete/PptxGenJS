@@ -1,4 +1,4 @@
-/* PptxGenJS 3.9.0-beta @ 2021-10-29T21:02:06.131Z */
+/* PptxGenJS 3.9.0-beta @ 2022-05-12T08:28:27.130Z */
 'use strict';
 
 var JSZip = require('jszip');
@@ -5077,7 +5077,7 @@ function makeChartType(chartType, data, opts, valAxisId, catAxisId, isMultiTypeC
             */
             var colorIndex_1 = -1; // Maintain the color index by region
             data.forEach(function (obj) {
-                var _a;
+                var _a, _b, _c, _d;
                 colorIndex_1++;
                 var idx = obj.index;
                 strXml += '<c:ser>';
@@ -5129,8 +5129,20 @@ function makeChartType(chartType, data, opts, valAxisId, catAxisId, isMultiTypeC
                     strXml += '  <c:dLbls>';
                     strXml += '    <c:numFmt formatCode="' + opts.dataLabelFormatCode + '" sourceLinked="0"/>';
                     if (opts.dataLabelBkgrdColors) {
+                        if (opts.debug) {
+                            console.log('opts.dataLabelBkgrdColors', opts.dataLabelBkgrdColors, seriesColor);
+                        }
                         strXml += '    <c:spPr>';
                         strXml += '       <a:solidFill>' + createColorElement(seriesColor) + '</a:solidFill>';
+                        strXml += '    </c:spPr>';
+                        // ToDo: make this work
+                    }
+                    else if (((_a = opts.dataLabelShadows) === null || _a === void 0 ? void 0 : _a[idx]) || opts.dataLabelShadow) {
+                        if (opts.debug) {
+                            console.log('opts.dataLabelShadow', opts.dataLabelShadow, createShadowElement(((_b = opts.dataLabelShadows) === null || _b === void 0 ? void 0 : _b[idx]) || opts.dataLabelShadow, DEF_SHAPE_SHADOW));
+                        }
+                        strXml += '    <c:spPr>';
+                        strXml += createShadowElement(((_c = opts.dataLabelShadows) === null || _c === void 0 ? void 0 : _c[idx]) || opts.dataLabelShadow, DEF_SHAPE_SHADOW);
                         strXml += '    </c:spPr>';
                     }
                     strXml += '    <c:txPr>';
@@ -5138,12 +5150,8 @@ function makeChartType(chartType, data, opts, valAxisId, catAxisId, isMultiTypeC
                     strXml += '      <a:lstStyle/>';
                     strXml += '      <a:p><a:pPr>';
                     strXml += '        <a:defRPr b="' + (opts.dataLabelFontBold ? 1 : 0) + '" i="' + (opts.dataLabelFontItalic ? 1 : 0) + '" strike="noStrike" sz="' + Math.round((opts.dataLabelFontSize || DEF_FONT_SIZE) * 100) + '" u="none">';
-                    strXml += '          <a:solidFill>' + createColorElement(((_a = opts.dataLabelColors) === null || _a === void 0 ? void 0 : _a[idx]) || opts.dataLabelColor || DEF_FONT_COLOR) + '</a:solidFill>';
+                    strXml += '          <a:solidFill>' + createColorElement(((_d = opts.dataLabelColors) === null || _d === void 0 ? void 0 : _d[idx]) || opts.dataLabelColor || DEF_FONT_COLOR) + '</a:solidFill>';
                     strXml += '          <a:latin typeface="' + (opts.dataLabelFontFace || 'Arial') + '"/>';
-                    // ToDo: make this work
-                    // if (opts.dataLabelShadows?.[idx] || opts.dataLabelShadow) {
-                    // 	strXml += createShadowElement(opts.dataLabelShadows?.[idx] || opts.dataLabelShadow, DEF_SHAPE_SHADOW)
-                    // }
                     strXml += '        </a:defRPr>';
                     strXml += '      </a:pPr></a:p>';
                     strXml += '    </c:txPr>';

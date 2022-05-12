@@ -739,8 +739,19 @@ function makeChartType(chartType: CHART_NAME, data: OptsChartData[], opts: IChar
 					strXml += '  <c:dLbls>'
 					strXml += '    <c:numFmt formatCode="' + opts.dataLabelFormatCode + '" sourceLinked="0"/>'
 					if (opts.dataLabelBkgrdColors) {
+						if (opts.debug) {
+							console.log('opts.dataLabelBkgrdColors', opts.dataLabelBkgrdColors, seriesColor)
+						}
 						strXml += '    <c:spPr>'
 						strXml += '       <a:solidFill>' + createColorElement(seriesColor) + '</a:solidFill>'
+						strXml += '    </c:spPr>'
+					// ToDo: make this work
+					} else if (opts.dataLabelShadows?.[idx] || opts.dataLabelShadow) {
+						if (opts.debug) {
+							console.log('opts.dataLabelShadow', opts.dataLabelShadow, createShadowElement(opts.dataLabelShadows?.[idx] || opts.dataLabelShadow, DEF_SHAPE_SHADOW))
+						}
+						strXml += '    <c:spPr>'
+						strXml += createShadowElement(opts.dataLabelShadows?.[idx] || opts.dataLabelShadow, DEF_SHAPE_SHADOW)
 						strXml += '    </c:spPr>'
 					}
 					strXml += '    <c:txPr>'
@@ -750,10 +761,6 @@ function makeChartType(chartType: CHART_NAME, data: OptsChartData[], opts: IChar
 					strXml += '        <a:defRPr b="' + (opts.dataLabelFontBold ? 1 : 0) + '" i="' + (opts.dataLabelFontItalic ? 1 : 0) + '" strike="noStrike" sz="' + Math.round((opts.dataLabelFontSize || DEF_FONT_SIZE) * 100) + '" u="none">'
 					strXml += '          <a:solidFill>' + createColorElement(opts.dataLabelColors?.[idx] || opts.dataLabelColor || DEF_FONT_COLOR) + '</a:solidFill>'
 					strXml += '          <a:latin typeface="' + (opts.dataLabelFontFace || 'Arial') + '"/>'
-					// ToDo: make this work
-					// if (opts.dataLabelShadows?.[idx] || opts.dataLabelShadow) {
-					// 	strXml += createShadowElement(opts.dataLabelShadows?.[idx] || opts.dataLabelShadow, DEF_SHAPE_SHADOW)
-					// }
 					strXml += '        </a:defRPr>'
 					strXml += '      </a:pPr></a:p>'
 					strXml += '    </c:txPr>'
