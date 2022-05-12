@@ -1281,6 +1281,7 @@ export interface IChartPropsDataLabel {
 	dataLabelFormatCode?: string
 	dataLabelFormatScatter?: 'custom' | 'customXY' | 'XY'
 	dataLabelPosition?: 'b' | 'bestFit' | 'ctr' | 'l' | 'r' | 't' | 'inEnd' | 'outEnd'
+	dataLabelPositions?: ('b' | 'bestFit' | 'ctr' | 'l' | 'r' | 't' | 'inEnd' | 'outEnd')[]
 }
 export interface IChartPropsDataTable {
 	dataTableFontSize?: number

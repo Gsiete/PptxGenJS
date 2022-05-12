@@ -229,7 +229,10 @@ export function addChartDefinition(target: PresSlide, type: CHART_NAME | IChartM
 			}
 		}
 	}
-	options.dataLabelBkgrdColors = options.dataLabelBkgrdColors === true || options.dataLabelBkgrdColors === false ? options.dataLabelBkgrdColors : false
+	options.dataLabelBkgrdColors = options.dataLabelBkgrdColors === true
+	if (options.debug) {
+		console.log('options.dataLabelBkgrdColors', options.dataLabelBkgrdColors)
+	}
 	if (['b', 'l', 'r', 't', 'tr'].indexOf(options.legendPos || '') < 0) options.legendPos = 'r'
 
 	// 3D bar: ST_Shape

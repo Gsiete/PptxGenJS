@@ -738,18 +738,13 @@ function makeChartType(chartType: CHART_NAME, data: OptsChartData[], opts: IChar
 				if (chartType !== CHART_TYPE.RADAR) {
 					strXml += '  <c:dLbls>'
 					strXml += '    <c:numFmt formatCode="' + opts.dataLabelFormatCode + '" sourceLinked="0"/>'
+
 					if (opts.dataLabelBkgrdColors) {
-						if (opts.debug) {
-							console.log('opts.dataLabelBkgrdColors', opts.dataLabelBkgrdColors, seriesColor)
-						}
 						strXml += '    <c:spPr>'
 						strXml += '       <a:solidFill>' + createColorElement(seriesColor) + '</a:solidFill>'
 						strXml += '    </c:spPr>'
 					// ToDo: make this work
 					} else if (opts.dataLabelShadows?.[idx] || opts.dataLabelShadow) {
-						if (opts.debug) {
-							console.log('opts.dataLabelShadow', opts.dataLabelShadow, createShadowElement(opts.dataLabelShadows?.[idx] || opts.dataLabelShadow, DEF_SHAPE_SHADOW))
-						}
 						strXml += '    <c:spPr>'
 						strXml += createShadowElement(opts.dataLabelShadows?.[idx] || opts.dataLabelShadow, DEF_SHAPE_SHADOW)
 						strXml += '    </c:spPr>'
@@ -1456,11 +1451,28 @@ function makeChartType(chartType: CHART_NAME, data: OptsChartData[], opts: IChar
 
 			// 3: "Data Label" block for every data Label
 			strXml += '<c:dLbls>'
+			if (opts.debug) {
+				console.log('dataLabelBkgrdColors', opts.dataLabelBkgrdColors);
+				console.log('dataLabelShadows', opts.dataLabelShadows, 'dataLabelShadow', opts.dataLabelShadow);
+			}
 			obj.labels.forEach((_label, idx) => {
 				strXml += '<c:dLbl>'
 				strXml += ` <c:idx val="${idx}"/>`
 				strXml += `  <c:numFmt formatCode="${opts.dataLabelFormatCode || 'General'}" sourceLinked="0"/>`
-				strXml += '  <c:spPr/><c:txPr>'
+				if (opts.dataLabelBkgrdColors) {
+					let seriesColor = opts.chartColors ? opts.chartColors[idx % opts.chartColors.length] : null
+					strXml += '  <c:spPr>'
+					strXml += '     <a:solidFill>' + createColorElement(seriesColor) + '</a:solidFill>'
+					strXml += '  </c:spPr>'
+					// ToDo: make this work
+				} else if (opts.dataLabelShadows?.[idx] || opts.dataLabelShadow) {
+					strXml += '  <c:spPr>'
+					strXml += createShadowElement(opts.dataLabelShadows?.[idx] || opts.dataLabelShadow, DEF_SHAPE_SHADOW)
+					strXml += '  </c:spPr>'
+				} else {
+					strXml += '  <c:spPr/>'
+				}
+				strXml += '  <c:txPr>'
 				strXml += '   <a:bodyPr/><a:lstStyle/>'
 				strXml += '   <a:p><a:pPr>'
 				strXml += `   <a:defRPr sz="${Math.round((opts.dataLabelFontSize || DEF_FONT_SIZE) * 100)}" b="${opts.dataLabelFontBold ? 1 : 0}" i="${opts.dataLabelFontItalic ? 1 : 0}" u="none" strike="noStrike">`
@@ -1478,7 +1490,9 @@ function makeChartType(chartType: CHART_NAME, data: OptsChartData[], opts: IChar
 				strXml += '   </a:defRPr>'
 				strXml += '      </a:pPr></a:p>'
 				strXml += '    </c:txPr>'
-				if (chartType === CHART_TYPE.PIE && opts.dataLabelPosition) strXml += `    <c:dLblPos val="${opts.dataLabelPosition}"/>`
+				if (chartType === CHART_TYPE.PIE && opts.dataLabelPosition && opts.dataLabelPositions) {
+					strXml += `    <c:dLblPos val="${opts.dataLabelPositions?.[idx] || opts.dataLabelPosition}"/>`
+				}
 				strXml += '    <c:showLegendKey val="0"/>'
 				strXml += '    <c:showVal val="' + (opts.showValue ? '1' : '0') + '"/>'
 				strXml += '    <c:showCatName val="' + (opts.showLabel ? '1' : '0') + '"/>'
