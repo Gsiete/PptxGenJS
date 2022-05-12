@@ -1490,9 +1490,8 @@ function makeChartType(chartType: CHART_NAME, data: OptsChartData[], opts: IChar
 				strXml += '   </a:defRPr>'
 				strXml += '      </a:pPr></a:p>'
 				strXml += '    </c:txPr>'
-				if (chartType === CHART_TYPE.PIE && opts.dataLabelPosition && opts.dataLabelPositions) {
-					strXml += `    <c:dLblPos val="${opts.dataLabelPositions?.[idx] || opts.dataLabelPosition}"/>`
-				}
+        const dataLabelPosition = opts.dataLabelPositions?.[idx] || opts.dataLabelPosition;
+				if (chartType === CHART_TYPE.PIE && dataLabelPosition) strXml += `    <c:dLblPos val="${dataLabelPosition}"/>`
 				strXml += '    <c:showLegendKey val="0"/>'
 				strXml += '    <c:showVal val="' + (opts.showValue ? '1' : '0') + '"/>'
 				strXml += '    <c:showCatName val="' + (opts.showLabel ? '1' : '0') + '"/>'

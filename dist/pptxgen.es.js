@@ -1,4 +1,4 @@
-/* PptxGenJS 3.9.0-beta @ 2022-05-12T09:39:54.658Z */
+/* PptxGenJS 3.9.0-beta @ 2022-05-12T10:08:40.189Z */
 import JSZip from 'jszip';
 
 /*! *****************************************************************************
@@ -5837,9 +5837,9 @@ function makeChartType(chartType, data, opts, valAxisId, catAxisId, isMultiTypeC
                 strXml += '   </a:defRPr>';
                 strXml += '      </a:pPr></a:p>';
                 strXml += '    </c:txPr>';
-                if (chartType === CHART_TYPE.PIE && opts.dataLabelPosition && opts.dataLabelPositions) {
-                    strXml += "    <c:dLblPos val=\"" + (((_d = opts.dataLabelPositions) === null || _d === void 0 ? void 0 : _d[idx]) || opts.dataLabelPosition) + "\"/>";
-                }
+                var dataLabelPosition = ((_d = opts.dataLabelPositions) === null || _d === void 0 ? void 0 : _d[idx]) || opts.dataLabelPosition;
+                if (chartType === CHART_TYPE.PIE && dataLabelPosition)
+                    strXml += "    <c:dLblPos val=\"" + dataLabelPosition + "\"/>";
                 strXml += '    <c:showLegendKey val="0"/>';
                 strXml += '    <c:showVal val="' + (opts.showValue ? '1' : '0') + '"/>';
                 strXml += '    <c:showCatName val="' + (opts.showLabel ? '1' : '0') + '"/>';
