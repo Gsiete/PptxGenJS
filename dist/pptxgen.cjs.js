@@ -1,4 +1,4 @@
-/* PptxGenJS 3.9.0-beta @ 2022-05-12T10:08:40.179Z */
+/* PptxGenJS 3.9.0-beta @ 2022-05-12T14:16:01.077Z */
 'use strict';
 
 var JSZip = require('jszip');
@@ -3451,7 +3451,7 @@ function addChartDefinition(target, type, data, opt) {
     if (options.layout) {
         ['x', 'y', 'w', 'h'].forEach(function (key) {
             var val = options.layout[key];
-            if (isNaN(Number(val)) || val < 0 || val > 1) {
+            if (val !== undefined && (isNaN(Number(val)) || val < 0 || val > 1)) {
                 console.warn('Warning: chart.layout.' + key + ' can only be 0-1');
                 delete options.layout[key]; // remove invalid value so that default will be used
             }

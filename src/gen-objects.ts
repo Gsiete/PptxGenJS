@@ -248,7 +248,7 @@ export function addChartDefinition(target: PresSlide, type: CHART_NAME | IChartM
 	if (options.layout) {
 		;['x', 'y', 'w', 'h'].forEach(key => {
 			let val = options.layout[key]
-			if (isNaN(Number(val)) || val < 0 || val > 1) {
+			if (val !== undefined && (isNaN(Number(val)) || val < 0 || val > 1)) {
 				console.warn('Warning: chart.layout.' + key + ' can only be 0-1')
 				delete options.layout[key] // remove invalid value so that default will be used
 			}
