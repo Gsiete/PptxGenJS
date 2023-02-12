@@ -1,4 +1,4 @@
-/* PptxGenJS 3.9.0-beta @ 2022-05-12T14:16:01.077Z */
+/* PptxGenJS 3.9.0-beta @ 2023-02-12T00:20:09.387Z */
 'use strict';
 
 var JSZip = require('jszip');
@@ -3587,7 +3587,7 @@ function addImageDefinition(target, opt) {
         .split('?')[0]
         .split('.')
         .pop()
-        .split('#')[0] || 'png';
+        .split('#')[0].toLowerCase() || 'png';
     // However, pre-encoded images can be whatever mime-type they want (and good for them!)
     if (strImageData && /image\/(\w+);/.exec(strImageData) && /image\/(\w+);/.exec(strImageData).length > 0) {
         strImgExtn = /image\/(\w+);/.exec(strImageData)[1];
