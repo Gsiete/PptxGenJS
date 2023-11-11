@@ -5,13 +5,102 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Notes]
+## Notes
 
-## [3.9.0] - 2021-11-??
+## [3.13.0](https://github.com/gitbrent/PptxGenJS/releases/tag/v3.13.0) - 2023-0?-0?
+
+- Added `textDirection` property for text and table cells to allow vertical rotation of text ([gitbrent](https://github.com/gitbrent))
+
+### Changed
+
+- Bump jszip to ^3.10.1 [\#1255](https://github.com/gitbrent/PptxGenJS/pull/1255) ([NateRadebaugh](https://github.com/NateRadebaugh))
+
+## [3.12.0](https://github.com/gitbrent/PptxGenJS/releases/tag/v3.12.0) - 2023-03-19
+
+### Added
+
+- Added selecting round or square line cap on line charts [\#1126](https://github.com/gitbrent/PptxGenJS/pull/1126) ([mathbruyen](https://github.com/mathbruyen))
+- Added `newAutoPagedSlides` method to `slide` (resolves issue #625) [\#1133](https://github.com/gitbrent/PptxGenJS/pull/1133) ([mikemeerschaert](https://github.com/mikemeerschaert))
+- Added optional image shadow props [\#1147](https://github.com/gitbrent/PptxGenJS/pull/1147) ([seekuehe](https://github.com/seekuehe))
+- Added ability to set default fontFace [\#1158](https://github.com/gitbrent/PptxGenJS/issues/1158) ([matt88120](https://github.com/matt88120))
 
 ### Fixed
 
+- Fixed `autoPage` duplicates text when text array is used [\#1139](https://github.com/gitbrent/PptxGenJS/issues/1139) ([mikemeerschaert](https://github.com/mikemeerschaert))
+- PowerPoint shows the "repair" dialog when adding an SVG image to a slide master [\#1150](https://github.com/gitbrent/PptxGenJS/issues/1150) ([BenHall-1](https://github.com/BenHall-1))
+- Fixed gh-pages text api docs: transparency + wrap [\#1153](https://github.com/gitbrent/PptxGenJS/pull/1153) ([tjinauyeung](https://github.com/tjinauyeung))
+- Fixed YouTube videos not working [\#1156](https://github.com/gitbrent/PptxGenJS/issues/1156) ([gitbrent](https://github.com/gitbrent))
+- Fixed handle `holeSize=0` for doughnut chart [\#1180](https://github.com/gitbrent/PptxGenJS/pull/1180) ([mathbruyen](https://github.com/mathbruyen))
+- Fixed 3D chart options not working correctly (and updated demo) ([gitbrent](https://github.com/gitbrent))
+
+### Changed
+
+- (Internal) migrate library from tslint to eslint [\#1155](https://github.com/gitbrent/PptxGenJS/pull/1155) ([gitbrent](https://github.com/gitbrent))
+
+## [3.11.0] - 2022-08-06
+
+### Added
+
+- Added category crosses at property (`catAxisCrossesAt`) [\#966](https://github.com/gitbrent/PptxGenJS/pull/966) ([parvezapathan](https://github.com/parvezapathan))
+- Added support for multi-level category axes [\#1012](https://github.com/gitbrent/PptxGenJS/pull/1012) ([MariusOpeepl](https://github.com/MariusOpeepl))
+- Added 2 new Chart props: `plotArea` and `chartArea` allowing fill and border for each (`plotArea` deprecates `fill` and `border`) [\#1015](https://github.com/gitbrent/PptxGenJS/issues/1015) ([hvstaden](https://github.com/hvstaden))
+- Added serie name on bubble chart, category axis position, leader lines on bubble chart [\#1100](https://github.com/gitbrent/PptxGenJS/pull/1100) ([mathbruyen](https://github.com/mathbruyen))
+- Added `bubble3D` chart type [\#1108](https://github.com/gitbrent/PptxGenJS/pull/1108) ([mathbruyen](https://github.com/mathbruyen))
+- Added new tool under demos: `data_convert` which turns Excel (tab-delim) data to chart data type easily ([gitbrent](https://github.com/gitbrent))
+
+### Fixed
+
+- Using `addImage()` with uppercase path prop causes "needs to repair presentation" [\#860](https://github.com/gitbrent/PptxGenJS/issues/860) ([mamodo123](https://github.com/mamodo123))
+- Chart with lines and bars produces repair file dialog in Powerpoint [\#1013](https://github.com/gitbrent/PptxGenJS/issues/1013) ([kornarakis](https://github.com/kornarakis))
+- Bubble Charts limited to 26 columns [\#1076](https://github.com/gitbrent/PptxGenJS/issues/1076) ([benjaminpavone](https://github.com/benjaminpavone))
+- Using `addImage` with `tableToSlides()` does not work [\#1103](https://github.com/gitbrent/PptxGenJS/issues/1103) ([Strawberry0215](https://github.com/Strawberry0215))
+- escape object name in chart xml [\#1122](https://github.com/gitbrent/PptxGenJS/pull/1122) ([mathbruyen](https://github.com/mathbruyen))
+- Several issues with charts embedded Excel sheets that prevented "Edit Data in Excel" from working ([gitbrent](https://github.com/gitbrent))
+- Issue with combo charts secondary axis on wrong side ([gitbrent](https://github.com/gitbrent))
+- Issue with chart prop `titlePos` not working ([gitbrent](https://github.com/gitbrent))
+
+### Changed
+
+- react-demo: updated `react-scripts` to v5.0.0 from v4 ([gitbrent](https://github.com/gitbrent))
+
+## [3.10.0] - 2022-04-10
+
+### Added
+
+- Add name (`objectName`) to all core objects [\#1019](https://github.com/gitbrent/PptxGenJS/pull/1019) ([mvecsernyes](https://github.com/mvecsernyes))
+- Add image transparency [\#1053](https://github.com/gitbrent/PptxGenJS/pull/1053) ([mmarkelov](https://github.com/mmarkelov))
+- Add text transparency [\#1054](https://github.com/gitbrent/PptxGenJS/issues/1054) ([ibrahimovfuad](https://github.com/ibrahimovfuad))
+
+### Fixed
+
+- Radar chart line colors [\#539](https://github.com/gitbrent/PptxGenJS/issues/539) ([pablodicosta](https://github.com/pablodicosta))
+- Placeholder definitions missing props [\#987](https://github.com/gitbrent/PptxGenJS/issues/987) ([bigbug](https://github.com/bigbug))
+- Charts and media together is causing pptx needs repair error [\#1020](https://github.com/gitbrent/PptxGenJS/issues/1020) ([mvecsernyes](https://github.com/mvecsernyes))
+- Adding hyperlink to table cell doesn't work [\#1049](https://github.com/gitbrent/PptxGenJS/issues/1049) ([tbowmo](https://github.com/tbowmo))
+- Underline doesn't work in table after update to v3.9.0 [\#1052](https://github.com/gitbrent/PptxGenJS/issues/1052) ([hhq365](https://github.com/hhq365))
+- `ImageProps.sizing` props `w`, `h`, `x`, `y` s/b typed `Coord` [\#1065](https://github.com/gitbrent/PptxGenJS/issues/1065) ([Naveencheekoti17](https://github.com/BistroStu))
+- `ImageProps.sizing` are type Coord [\#1066](https://github.com/gitbrent/PptxGenJS/pull/1066) ([BistroStu](https://github.com/BistroStu))
+- `transparency` doesn't work in table cell [\#1095](https://github.com/gitbrent/PptxGenJS/issues/1095) ([pipipi-pikachu](https://github.com/pipipi-pikachu))
+
+## [3.9.0] - 2021-12-11
+
+### Added
+
+- Added overlap parameter to bar charts [\#1010](https://github.com/gitbrent/PptxGenJS/pull/1010) ([Norfaer](https://github.com/Norfaer))
+- Slide number can now be set as bold [\#1016](https://github.com/gitbrent/PptxGenJS/pull/1016) ([mathbruyen](https://github.com/mathbruyen))
+- Added media cover images & file extensions; media is reused now (same file only loaded/written once) [\#1024](https://github.com/gitbrent/PptxGenJS/pull/1024) ([canwdev](https://github.com/canwdev))
+
+### Fixed
+
+- Use `encodeXmlEntities()` for formatCode attributes [\#955](https://github.com/gitbrent/PptxGenJS/pull/955) ([dimfeld](https://github.com/dimfeld))
 - SlideNumber vertical alignment (`valign`) not working [\#1000](https://github.com/gitbrent/PptxGenJS/pull/1000) ([kramsram](https://github.com/kramsram))
+- Fix for InvertedColors (Issue #970) [\#1004](https://github.com/gitbrent/PptxGenJS/pull/1004) ([leonyah](https://github.com/leonyah))
+- PPT repair issue for long text [\#1008](https://github.com/gitbrent/PptxGenJS/issues/1008) ([Naveencheekoti17](https://github.com/Naveencheekoti17)), fixed via [\#1028](https://github.com/gitbrent/PptxGenJS/pull/1028) ([gitbrent](https://github.com/gitbrent))
+- Doughnut chart: each data marker as a different color [\#1017](https://github.com/gitbrent/PptxGenJS/pull/1017) ([mathbruyen](https://github.com/mathbruyen))
+
+### Changed
+
+- React Demo: updated to latest create-react-app ([gitbrent](https://github.com/gitbrent))
 
 ## [3.8.0] - 2021-09-28
 
@@ -22,7 +111,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Browser Demo: refreshed UI and upgraded to bootstrap-5 [\#997](https://github.com/gitbrent/PptxGenJS/pull/997) ([gitbrent](https://github.com/gitbrent))
-- Documentation site (gh-pages) rebuilt from scrath [\#999](https://github.com/gitbrent/PptxGenJS/pull/999) ([gitbrent](https://github.com/gitbrent))
+- Documentation site (gh-pages) rebuilt from scratch [\#999](https://github.com/gitbrent/PptxGenJS/pull/999) ([gitbrent](https://github.com/gitbrent))
 
 ## [3.7.1] - 2021-07-21
 
@@ -389,7 +478,7 @@ Comprehensive Pull
 
 - New Feature: Placeholders
 - New Feature: Speaker Notes
-- `addImage()` can now load both local ("../img.png") and remote images ("https://wikimedia.org/logo.jpg")
+- `addImage()` can now load both local ("../img.png") and remote images ("<https://wikimedia.org/logo.jpg>")
 - Typescript definitions are now available
 - `jquery-node` replaced with latest `jquery` package [only affects npm users]
 

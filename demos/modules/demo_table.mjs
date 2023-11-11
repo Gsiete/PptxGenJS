@@ -3,8 +3,8 @@
  * AUTH: Brent Ely (https://github.com/gitbrent/)
  * DESC: Common test/demo slides for all library features
  * DEPS: Used by various demos (./demos/browser, ./demos/node, etc.)
- * VER.: 3.7.2
- * BLD.: 20210807
+ * VER.: 3.12.0
+ * BLD.: 20230207
  */
 
 import {
@@ -36,6 +36,9 @@ export function genSlides_Table(pptx) {
 
 	pptx.addSection({ title: "Tables: Auto-Paging Calc" });
 	genSlide09(pptx);
+
+	pptx.addSection({ title: "Tables: QA" });
+	genSlide10(pptx);
 }
 
 /**
@@ -98,7 +101,7 @@ function genSlide01(pptx) {
 		],
 		[
 			{ text: "Bold", options: { fill: { color: "003366" }, bold: true } },
-			{ text: "Underline", options: { fill: { color: "336699" }, underline: true } },
+			{ text: "Underline", options: { fill: { color: "336699" }, underline: { style: "sng" } } },
 			{ text: "0.15 margin", options: { fill: { color: "6699CC" }, margin: 0.15 } },
 		],
 	];
@@ -207,47 +210,47 @@ function genSlide02(pptx) {
 	let tabOpts3 = {
 		x: 0.5,
 		y: 5.15,
-		w: 6.25,
+		w: 6.0,
 		h: 2,
 		margin: 0.05,
 		align: "center",
 		valign: "middle",
 		fontSize: 16,
-		border: { pt: "1", color: "c7c7c7" },
+		border: { pt: "2", color: pptx.colors.TEXT2 },
 		fill: { color: "F1F1F1" },
 	};
 	let arrTabRows3 = [
 		[
-			{ text: "A1\nA2\nA3", options: { rowspan: 3, fill: { color: "FFFCCC" } } },
-			{ text: "B1\nB2", options: { rowspan: 2, fill: { color: "FFFCCC" } } },
-			"C1",
+			{ text: "A1\nA2\nA3", options: { rowspan: 3, fill: { color: pptx.colors.ACCENT6 } } },
+			{ text: "B1\nB2", options: { rowspan: 2, fill: { color: pptx.colors.ACCENT2 } } },
+			{ text: "C1", options: { fill: { color: pptx.colors.ACCENT4 } } },
 		],
-		["C2"],
-		[{ text: "B3 -> C3", options: { colspan: 2, fill: { color: "99FFCC" } } }],
+		[{ text: "C2", options: { fill: { color: pptx.colors.ACCENT4 } } }],
+		[{ text: "B3 -> C3", options: { colspan: 2, fill: { color: pptx.colors.ACCENT5 } } }],
 	];
 	slide.addTable(arrTabRows3, tabOpts3);
 
 	// BTM-RIGHT
 	let tabOpts4 = {
-		x: 7.4,
+		x: 6.93,
 		y: 5.15,
-		w: 5.5,
+		w: 6.0,
 		h: 2,
 		margin: 0,
 		align: "center",
 		valign: "middle",
 		fontSize: 16,
-		border: { pt: "1", color: "c7c7c7" },
+		border: { pt: "1", color: pptx.colors.TEXT2 },
 		fill: { color: "f2f9fc" },
 	};
 	let arrTabRows4 = [
 		[
-			"A1",
-			{ text: "B1\nB2", options: { rowspan: 2, fill: { color: "FFFCCC" } } },
-			{ text: "C1\nC2\nC3", options: { rowspan: 3, fill: { color: "FFFCCC" } } },
+			{ text: "A1", options: { fill: { color: pptx.colors.ACCENT4, transparency: 25 } } },
+			{ text: "B1\nB2", options: { rowspan: 2, fill: { color: pptx.colors.ACCENT2, transparency: 25 } } },
+			{ text: "C1\nC2\nC3", options: { rowspan: 3, fill: { color: pptx.colors.ACCENT6, transparency: 25 } } },
 		],
-		["A2"],
-		[{ text: "A3 -> B3", options: { colspan: 2, fill: { color: "99FFCC" } } }],
+		[{ text: "A2", options: { fill: { color: pptx.colors.ACCENT4, transparency: 25 } } }],
+		[{ text: "A3 -> B3", options: { colspan: 2, fill: { color: pptx.colors.ACCENT5, transparency: 25 } } }],
 	];
 	slide.addTable(arrTabRows4, tabOpts4);
 }
@@ -354,7 +357,7 @@ function genSlide04(pptx) {
 		[
 			{ text: "Text Objects", options: { color: "99ABCC", align: "right" } },
 			{ text: "2nd cell", options: { color: "0000EE", align: "center" } },
-			{ text: 3, options: { color: "0088CC", align: "left" } },
+			{ text: "Hyperlink", options: { hyperlink: { url: "https://github.com/gitbrent/pptxgenjs" } } },
 		],
 	];
 	slide.addTable(arrTextObjects, { x: 0.5, y: 2.7, w: 12.25, margin: 8, fill: { color: "F1F1F1" }, border: { pt: 1, color: "696969" } }); // DEPRECATED: `margin` in points
@@ -591,7 +594,7 @@ function genSlide07(pptx) {
 
 	// EX-3: "Master Page with Auto-Paging"
 	{
-		slide = pptx.addSlide({ sectionTitle: "Tables: Auto-Paging", masterName: "MASTER_PLAIN" });
+		slide = pptx.addSlide({ sectionTitle: "Tables: Auto-Paging", masterName: "MASTER_AUTO_PAGE_TABLE_PLACEHOLDER" });
 		slide.addText(
 			[
 				{ text: "Table Examples: ", options: DEMO_TITLE_TEXT },
@@ -599,7 +602,11 @@ function genSlide07(pptx) {
 			],
 			{ x: 0.5, y: 0.13, w: "90%" }
 		);
+		slide.addText("Auto-Paging table", { placeholder: "footer" });
 		slide.addTable(arrRows, { x: 1.0, y: 0.6, colW: [0.75, 1.75, 7], margin: 0.05, border: { color: "CFCFCF" }, autoPage: true });
+		// HOWTO: In cases where you want to add custom text, placeholders, etc. to slidemasters, a reference to these slide(s) is needed
+		// HOWTO: Use the `newAutoPagedSlides` to access references (see [Issue #625](https://github.com/gitbrent/PptxGenJS/issues/625))
+		slide.newAutoPagedSlides.forEach((slide) => slide.addText("Auto-Paging table continued...", { placeholder: "footer" }));
 	}
 
 	// EX-4: "Auto-Paging Disabled"
@@ -873,4 +880,150 @@ function genSlide09(pptx) {
 		autoPageRepeatHeader: true,
 		verbose: false,
 	});
+}
+
+/**
+ * SLIDE 10[...]: Test paging with a single row
+ * @param {PptxGenJS} pptx
+ * @since 3.9.0
+ */
+function genSlide10(pptx) {
+	let slide = null;
+
+	// SLIDE 1:
+	{
+		slide = pptx.addSlide({ sectionTitle: "Tables: QA" });
+
+		let projRows = [
+			[
+				{ text: "id", options: { bold: true, fill: "1F3864", color: "ffffff" } },
+				{ text: "First item Desc", options: { bold: true, fill: "1F3864", color: "ffffff" } },
+				{ text: "Impact", options: { bold: true, fill: "1F3864", color: "ffffff" } },
+				{ text: "Owner", options: { bold: true, fill: "1F3864", color: "ffffff" } },
+				{ text: "Created Date", options: { bold: true, fill: "1F3864", color: "ffffff" } },
+				{ text: "Due Date", options: { bold: true, fill: "1F3864", color: "ffffff" } },
+				{ text: "Status", options: { bold: true, fill: "1F3864", color: "ffffff" } },
+				{ text: "Update", options: { bold: true, fill: "1F3864", color: "ffffff" } },
+			],
+			[
+				{ text: "1" },
+				{
+					text: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna.",
+				},
+				{ text: "Adam" },
+				{ text: "Aenean commodo ligula eget dolor. Aenean massa." },
+				{ text: "20-10-2021" },
+				{ text: "01-11-2021" },
+				{ text: "Pending" },
+				{ text: "24-10-2021" },
+			],
+		];
+
+		slide.addTable(projRows, {
+			x: 0.4,
+			y: 5.25,
+			colW: [0.5, 1.8, 5, 0.9, 1.0, 0.95, 0.8, 1.5],
+			border: { pt: 0.1, color: "818181" },
+			align: "left",
+			valign: "middle",
+			fontFace: "Segoe UI",
+			fontSize: 8,
+			autoPage: true,
+			autoPageRepeatHeader: true,
+			autoPageLineWeight: -0.4,
+			verbose: true,
+		});
+	}
+
+	// SLIDE 2:
+	{
+		slide = pptx.addSlide({ sectionTitle: "Tables: QA" });
+
+		let projRows2 = [
+			[
+				{ text: "id", options: { bold: true, fill: "1F3864", color: "ffffff" } },
+				{ text: "First item Desc", options: { bold: true, fill: "1F3864", color: "ffffff" } },
+				{ text: "Impact", options: { bold: true, fill: "1F3864", color: "ffffff" } },
+				{ text: "Owner", options: { bold: true, fill: "1F3864", color: "ffffff" } },
+				{ text: "Created Date", options: { bold: true, fill: "1F3864", color: "ffffff" } },
+				{ text: "Due Date", options: { bold: true, fill: "1F3864", color: "ffffff" } },
+				{ text: "Status", options: { bold: true, fill: "1F3864", color: "ffffff" } },
+				{ text: "Update", options: { bold: true, fill: "1F3864", color: "ffffff" } },
+			],
+			[
+				{ text: "1" },
+				{
+					text: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna.",
+				},
+				{ text: "" },
+				{ text: "" },
+				{ text: "" },
+				{ text: "" },
+				{ text: "" },
+				{ text: "" },
+			],
+		];
+
+		slide.addTable(projRows2, {
+			x: 0.4,
+			y: 5.25,
+			colW: [0.5, 1.8, 5, 0.9, 1.0, 0.95, 0.8, 1.5],
+			border: { pt: 0.1, color: "818181" },
+			align: "left",
+			valign: "middle",
+			fontFace: "Segoe UI",
+			fontSize: 8,
+			autoPage: true,
+			autoPageRepeatHeader: true,
+			autoPageLineWeight: -0.4,
+			verbose: true,
+		});
+	}
+
+	// SLIDE 3:
+	{
+		slide = pptx.addSlide({ sectionTitle: "Tables: QA" });
+
+		let projRows = [
+			[
+				{ text: "id", options: { bold: true, fill: "1F3864", color: "ffffff" } },
+				{ text: "First item Desc", options: { bold: true, fill: "1F3864", color: "ffffff" } },
+				{ text: "Impact", options: { bold: true, fill: "1F3864", color: "ffffff" } },
+				{ text: "Owner", options: { bold: true, fill: "1F3864", color: "ffffff" } },
+				{ text: "Created Date", options: { bold: true, fill: "1F3864", color: "ffffff" } },
+				{ text: "Due Date", options: { bold: true, fill: "1F3864", color: "ffffff" } },
+				{ text: "Status", options: { bold: true, fill: "1F3864", color: "ffffff" } },
+				{ text: "Update", options: { bold: true, fill: "1F3864", color: "ffffff" } },
+			],
+			[
+				{ text: "1" },
+				{
+					text: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna.",
+				},
+				{
+					text: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna.",
+				},
+				{ text: "Aenean commodo ligula eget dolor. Aenean massa." },
+				{ text: "20-10-2021" },
+				{ text: "01-11-2021" },
+				{ text: "Pending" },
+				{ text: "24-10-2021" },
+			],
+		];
+
+		slide.addTable(projRows, {
+			x: 0.4,
+			y: 5.25,
+			colW: [0.5, 3.4, 3.4, 0.9, 1.0, 0.95, 0.8, 1.5],
+			border: { pt: 0.1, color: "818181" },
+			align: "left",
+			valign: "middle",
+			fontFace: "Segoe UI",
+			fontSize: 8,
+			autoPage: true,
+			autoPageRepeatHeader: true,
+			autoPageLineWeight: -0.4,
+			verbose: true,
+		});
+	}
 }

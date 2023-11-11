@@ -16,12 +16,17 @@
 - [Table of Contents](#table-of-contents)
 - [Introduction](#introduction)
 - [Features](#features)
+	- [Works Everywhere](#works-everywhere)
+	- [Full Featured](#full-featured)
+	- [Simple and Powerful](#simple-and-powerful)
+	- [Export Your Way](#export-your-way)
+	- [HTML to PowerPoint](#html-to-powerpoint)
 - [Live Demos](#live-demos)
 - [Installation](#installation)
-	- [CDN](#cdn)
-	- [Download](#download)
 	- [Npm](#npm)
 	- [Yarn](#yarn)
+	- [CDN](#cdn)
+	- [Download](#download)
 	- [Additional Builds](#additional-builds)
 - [Documentation](#documentation)
 	- [Quick Start Guide](#quick-start-guide)
@@ -42,31 +47,31 @@ This library creates Open Office XML (OOXML) Presentations which are compatible 
 
 # Features
 
-**Works Everywhere**
+## Works Everywhere
 
 - Every modern desktop and mobile browser is supported
-- Integrates with Node, Angular, React and Electron
+- Integrates with Node, Angular, React, and Electron
 - Compatible with PowerPoint, Keynote, and more
 
-**Full Featured**
+## Full Featured
 
 - All major object types are available (charts, shapes, tables, etc.)
 - Master Slides for academic/corporate branding
 - SVG images, animated gifs, YouTube videos, RTL text, and Asian fonts
 
-**Simple And Powerful**
+## Simple and Powerful
 
 - The absolute easiest PowerPoint library to use
 - Learn as you code will full typescript definitions included
-- Tons of demo code comes included (over 70 slides of features)
+- Tons of demo code comes included (over 75 slides of features)
 
-**Export Your Way**
+## Export Your Way
 
 - Exports files direct to client browsers with proper MIME-type
 - Other export formats available: base64, blob, stream, etc.
 - Presentation compression options and more
 
-**HTML to PowerPoint**
+## HTML to PowerPoint
 
 - Includes powerful [HTML-to-PowerPoint](#html-to-powerpoint-feature) feature to transform HTML tables into presentations with a single line of code
 
@@ -74,9 +79,23 @@ This library creates Open Office XML (OOXML) Presentations which are compatible 
 
 Visit the demos page to create a simple presentation to see how easy it is to use pptxgenjs, or check out the complete demo which showcases every available feature.
 
-- [PptxGenJS Demos](https://gitbrent.github.io/PptxGenJS/demo)
+- [PptxGenJS Demos](https://gitbrent.github.io/PptxGenJS/demos/)
 
 # Installation
+
+## Npm
+
+[PptxGenJS NPM Home](https://www.npmjs.com/package/pptxgenjs)
+
+```bash
+npm install pptxgenjs --save
+```
+
+## Yarn
+
+```bash
+yarn add pptxgenjs
+```
 
 ## CDN
 
@@ -85,14 +104,14 @@ Visit the demos page to create a simple presentation to see how easy it is to us
 Bundle: Modern Browsers and IE11
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.8.0/dist/pptxgen.bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 ```
 
 Min files: Modern Browsers
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.8.0/libs/jszip.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.8.0/dist/pptxgen.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/libs/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/dist/pptxgen.min.js"></script>
 ```
 
 ## Download
@@ -112,20 +131,6 @@ Min files: Modern Browsers
 ```html
 <script src="PptxGenJS/libs/jszip.min.js"></script>
 <script src="PptxGenJS/dist/pptxgen.min.js"></script>
-```
-
-## Npm
-
-[PptxGenJS NPM Home](https://www.npmjs.com/package/pptxgenjs)
-
-```bash
-npm install pptxgenjs --save
-```
-
-## Yarn
-
-```bash
-yarn add pptxgenjs
 ```
 
 ## Additional Builds
@@ -187,21 +192,21 @@ That's really all there is to it!
 
 Full documentation and code examples are available
 
-- [Creating a Presentation](https://gitbrent.github.io/PptxGenJS/docs/usage-pres-create)
-- [Presentation Options](https://gitbrent.github.io/PptxGenJS/docs/usage-pres-options)
-- [Adding a Slide](https://gitbrent.github.io/PptxGenJS/docs/usage-add-slide)
-- [Slide Options](https://gitbrent.github.io/PptxGenJS/docs/usage-slide-options)
-- [Saving a Presentation](https://gitbrent.github.io/PptxGenJS/docs/usage-saving)
-- [Master Slides](https://gitbrent.github.io/PptxGenJS/docs/masters)
-- [Adding Charts](https://gitbrent.github.io/PptxGenJS/docs/api-charts)
-- [Adding Images](https://gitbrent.github.io/PptxGenJS/docs/api-images)
-- [Adding Media](https://gitbrent.github.io/PptxGenJS/docs/api-media)
-- [Adding Shapes](https://gitbrent.github.io/PptxGenJS/docs/api-shapes)
-- [Adding Tables](https://gitbrent.github.io/PptxGenJS/docs/api-tables)
-- [Adding Text](https://gitbrent.github.io/PptxGenJS/docs/api-text)
-- [Speaker Notes](https://gitbrent.github.io/PptxGenJS/docs/speaker-notes)
-- [Using Scheme Colors](https://gitbrent.github.io/PptxGenJS/docs/shapes-and-schemes)
-- [Integration with Other Libraries](https://gitbrent.github.io/PptxGenJS/docs/integration)
+- [Creating a Presentation](https://gitbrent.github.io/PptxGenJS/docs/usage-pres-create/)
+- [Presentation Options](https://gitbrent.github.io/PptxGenJS/docs/usage-pres-options/)
+- [Adding a Slide](https://gitbrent.github.io/PptxGenJS/docs/usage-add-slide/)
+- [Slide Options](https://gitbrent.github.io/PptxGenJS/docs/usage-slide-options/)
+- [Saving a Presentation](https://gitbrent.github.io/PptxGenJS/docs/usage-saving/)
+- [Master Slides](https://gitbrent.github.io/PptxGenJS/docs/masters/)
+- [Adding Charts](https://gitbrent.github.io/PptxGenJS/docs/api-charts/)
+- [Adding Images](https://gitbrent.github.io/PptxGenJS/docs/api-images/)
+- [Adding Media](https://gitbrent.github.io/PptxGenJS/docs/api-media/)
+- [Adding Shapes](https://gitbrent.github.io/PptxGenJS/docs/api-shapes/)
+- [Adding Tables](https://gitbrent.github.io/PptxGenJS/docs/api-tables/)
+- [Adding Text](https://gitbrent.github.io/PptxGenJS/docs/api-text/)
+- [Speaker Notes](https://gitbrent.github.io/PptxGenJS/docs/speaker-notes/)
+- [Using Scheme Colors](https://gitbrent.github.io/PptxGenJS/docs/shapes-and-schemes/)
+- [Integration with Other Libraries](https://gitbrent.github.io/PptxGenJS/docs/integration/)
 
 ---
 
@@ -217,8 +222,7 @@ pptx.writeFile({ fileName: "html2pptx-demo.pptx" });
 
 Learn more:
 
-- [HTML-to-PowerPoint Documentation](https://gitbrent.github.io/PptxGenJS/docs/html-to-powerpoint)
-- [Online HTML-to-PowerPoint Demo](https://gitbrent.github.io/PptxGenJS/demo/#html2pptx)
+- [HTML-to-PowerPoint Docs/Demo](https://gitbrent.github.io/PptxGenJS/html2pptx/)
 
 ---
 
@@ -269,7 +273,7 @@ PowerPoint shape definitions and some XML code via [Officegen Project](https://g
 
 # Sponsor Us
 
-If you find this library useful, please consider sponsoring us through a [donation](https://gitbrent.github.io/PptxGenJS/sponsor)
+If you find this library useful, please consider sponsoring us through a [donation](https://gitbrent.github.io/PptxGenJS/sponsor/)
 
 ---
 

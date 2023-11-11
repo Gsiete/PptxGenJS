@@ -1,4 +1,4 @@
-// Type definitions for pptxgenjs 3.8.0
+// Type definitions for pptxgenjs 3.12.0
 // Project: https://gitbrent.github.io/PptxGenJS/
 // Definitions by: Brent Ely <https://github.com/gitbrent/>
 //                 Michael Beaumont <https://github.com/michaelbeaumont>
@@ -19,7 +19,7 @@ declare class PptxGenJS {
 	readonly version: string
 
 	// Exposed prop types
-	readonly presLayout: PptxGenJS.PresentationProps
+	readonly presLayout: PptxGenJS.PresLayout
 	readonly AlignH: typeof PptxGenJS.AlignH
 	readonly AlignV: typeof PptxGenJS.AlignV
 	readonly ChartType: typeof PptxGenJS.ChartType
@@ -72,6 +72,11 @@ declare class PptxGenJS {
 	 * @type {string}
 	 */
 	subject: string
+	/**
+	 * Presentation theme (default fonts)
+	 * @type {ThemeProps}
+	 */
+	theme: PptxGenJS.ThemeProps
 	/**
 	 * Presentation name
 	 * @type {string}
@@ -157,6 +162,7 @@ declare namespace PptxGenJS {
 		'bar' = 'bar',
 		'bar3d' = 'bar3D',
 		'bubble' = 'bubble',
+		'bubble3d' = 'bubble3D',
 		'doughnut' = 'doughnut',
 		'line' = 'line',
 		'pie' = 'pie',
@@ -171,6 +177,9 @@ declare namespace PptxGenJS {
 		'nodebuffer' = 'nodebuffer',
 		'uint8array' = 'uint8array',
 	}
+	/**
+	 * TODO: FUTURE: v4.0: rename to `SchemeColor`
+	 */
 	export enum SchemeColor {
 		'text1' = 'tx1',
 		'text2' = 'tx2',
@@ -607,7 +616,7 @@ declare namespace PptxGenJS {
 	}
 
 	// @source `core-interfaces.d.ts` (via import)
-	// @code `import { CHART_NAME, PLACEHOLDER_TYPES, SHAPE_NAME, SLIDE_OBJECT_TYPES, TEXT_HALIGN, TEXT_VALIGN } from './core-enums'`
+	// @code `import { CHART_NAME, PLACEHOLDER_TYPES, SHAPE_NAME, SLIDE_OBJECT_TYPES, TEXT_HALIGN, TEXT_VALIGN, WRITE_OUTPUT_TYPE } from './core-enums'`
 	export type CHART_NAME = 'area' | 'bar' | 'bar3D' | 'bubble' | 'doughnut' | 'line' | 'pie' | 'radar' | 'scatter'
 	export enum PLACEHOLDER_TYPES {
 		'title' = 'title',
@@ -829,14 +838,14 @@ declare namespace PptxGenJS {
 
 	/**
 	 * Coordinate number - either:
-	 * - Inches
-	 * - Percentage
+	 * - Inches (0-n)
+	 * - Percentage (0-100)
 	 *
 	 * @example 10.25 // coordinate in inches
 	 * @example '75%' // coordinate as percentage of slide size
 	 */
-	export type Coord = number | string
-	export type PositionProps = {
+	export type Coord = number | `${number}%`
+	export interface PositionProps {
 		/**
 		 * Horizontal position
 		 * - inches or percentage
@@ -869,7 +878,7 @@ declare namespace PptxGenJS {
 	/**
 	 * Either `data` or `path` is required
 	 */
-	export type DataOrPathProps = {
+	export interface DataOrPathProps {
 		/**
 		 * URL or relative path
 		 *
@@ -891,6 +900,12 @@ declare namespace PptxGenJS {
 		 * @deprecated v3.6.0 - use `ShapeFillProps` instead
 		 */
 		fill?: HexColor
+
+		/**
+		 * source URL
+		 * @deprecated v3.6.0 - use `DataOrPathProps` instead - remove in v4.0.0
+		 */
+		src?: string
 	}
 	/**
 	 * Color in Hex format
@@ -917,6 +932,8 @@ declare namespace PptxGenJS {
 		 */
 		color?: HexColor
 
+		// TODO: add `transparency` prop to Borders (0-100%)
+
 		// TODO: add `width` - deprecate `pt`
 		/**
 		 * Border size (points)
@@ -926,6 +943,7 @@ declare namespace PptxGenJS {
 	}
 	// used by: image, object, text,
 	export interface HyperlinkProps {
+		//_rId: number
 		/**
 		 * Slide number to link to
 		 */
@@ -939,15 +957,7 @@ declare namespace PptxGenJS {
 		 */
 		tooltip?: string
 	}
-	export interface PlaceholderProps {
-		name: string
-		type: PLACEHOLDER_TYPE
-		x: Coord
-		y: Coord
-		w: Coord
-		h: Coord
-	}
-	// used by: chart, text
+	// used by: chart, text, image
 	export interface ShadowProps {
 		/**
 		 * shadow type
@@ -955,7 +965,8 @@ declare namespace PptxGenJS {
 		 */
 		type: 'outer' | 'inner' | 'none'
 		/**
-		 * opacity (0.0 - 1.0)
+		 * opacity (percent)
+		 * - range: 0.0-1.0
 		 * @example 0.5 // 50% opaque
 		 */
 		opacity?: number // TODO: "Transparency (0-100%)" in PPT // TODO: deprecate and add `transparency`
@@ -982,18 +993,24 @@ declare namespace PptxGenJS {
 		 * @example 'FF3399'
 		 */
 		color?: HexColor
+		/**
+		 * whether to rotate shadow with shape
+		 * @default false
+		 */
+		rotateWithShape?: boolean
 	}
 	// used by: shape, table, text
 	export interface ShapeFillProps {
 		/**
 		 * Fill color
 		 * - `HexColor` or `ThemeColor`
-		 * @example 'FF0000' // red
-		 * @example 'pptx.SchemeColor.text1' // Text1 Theme Color
+		 * @example 'FF0000' // hex color (red)
+		 * @example pptx.SchemeColor.text1 // Theme color (Text1)
 		 */
 		color?: Color
 		/**
 		 * Transparency (percent)
+		 * - MS-PPT > Format Shape > Fill & Line > Fill > Transparency
 		 * - range: 0-100
 		 * @default 0
 		 */
@@ -1076,97 +1093,92 @@ declare namespace PptxGenJS {
 		 */
 		breakLine?: boolean
 		/**
-		 * Add a soft line-break (shift+enter) before line text content
-		 * @default false
-		 * @since v3.5.0
-		 */
-		softBreakBefore?: boolean
-		/**
 		 * Add standard or custom bullet
 		 * - use `true` for standard bullet
 		 * - pass object options for custom bullet
 		 * @default false
 		 */
 		bullet?:
-			| boolean
-			| {
-					/**
-					 * Bullet type
-					 * @default bullet
-					 */
-					type?: 'bullet' | 'number'
-					/**
-					 * Bullet character code (unicode)
-					 * @since v3.3.0
-					 * @example '25BA' // 'BLACK RIGHT-POINTING POINTER' (U+25BA)
-					 */
-					characterCode?: string
-					/**
-					 * Indentation (space between bullet and text) (points)
-					 * @since v3.3.0
-					 * @default 27 // DEF_BULLET_MARGIN
-					 * @example 10 // Indents text 10 points from bullet
-					 */
-					indent?: number
-					/**
-					 * Number type
-					 * @since v3.3.0
-					 * @example 'romanLcParenR' // roman numerals lower-case with paranthesis right
-					 */
-					numberType?:
-						| 'alphaLcParenBoth'
-						| 'alphaLcParenR'
-						| 'alphaLcPeriod'
-						| 'alphaUcParenBoth'
-						| 'alphaUcParenR'
-						| 'alphaUcPeriod'
-						| 'arabicParenBoth'
-						| 'arabicParenR'
-						| 'arabicPeriod'
-						| 'arabicPlain'
-						| 'romanLcParenBoth'
-						| 'romanLcParenR'
-						| 'romanLcPeriod'
-						| 'romanUcParenBoth'
-						| 'romanUcParenR'
-						| 'romanUcPeriod'
-					/**
-					 * Number bullets start at
-					 * @since v3.3.0
-					 * @default 1
-					 * @example 10 // numbered bullets start with 10
-					 */
-					numberStartAt?: number
+		| boolean
+		| {
+			/**
+			 * Bullet type
+			 * @default bullet
+			 */
+			type?: 'bullet' | 'number'
+			/**
+			 * Bullet character code (unicode)
+			 * @since v3.3.0
+			 * @example '25BA' // 'BLACK RIGHT-POINTING POINTER' (U+25BA)
+			 */
+			characterCode?: string
+			/**
+			 * Indentation (space between bullet and text) (points)
+			 * @since v3.3.0
+			 * @default 27 // DEF_BULLET_MARGIN
+			 * @example 10 // Indents text 10 points from bullet
+			 */
+			indent?: number
+			/**
+			 * Number type
+			 * @since v3.3.0
+			 * @example 'romanLcParenR' // roman numerals lower-case with paranthesis right
+			 */
+			numberType?:
+			| 'alphaLcParenBoth'
+			| 'alphaLcParenR'
+			| 'alphaLcPeriod'
+			| 'alphaUcParenBoth'
+			| 'alphaUcParenR'
+			| 'alphaUcPeriod'
+			| 'arabicParenBoth'
+			| 'arabicParenR'
+			| 'arabicPeriod'
+			| 'arabicPlain'
+			| 'romanLcParenBoth'
+			| 'romanLcParenR'
+			| 'romanLcPeriod'
+			| 'romanUcParenBoth'
+			| 'romanUcParenR'
+			| 'romanUcPeriod'
+			/**
+			 * Number bullets start at
+			 * @since v3.3.0
+			 * @default 1
+			 * @example 10 // numbered bullets start with 10
+			 */
+			numberStartAt?: number
 
-					// DEPRECATED
+			// DEPRECATED
 
-					/**
-					 * Bullet code (unicode)
-					 * @deprecated v3.3.0 - use `characterCode`
-					 */
-					code?: string
-					/**
-					 * Margin between bullet and text
-					 * @since v3.2.1
-					 * @deplrecated v3.3.0 - use `indent`
-					 */
-					marginPt?: number
-					/**
-					 * Number to start with (only applies to type:number)
-					 * @deprecated v3.3.0 - use `numberStartAt`
-					 */
-					startAt?: number
-					/**
-					 * Number type
-					 * @deprecated v3.3.0 - use `numberType`
-					 */
-					style?: string
-			  }
+			/**
+			 * Bullet code (unicode)
+			 * @deprecated v3.3.0 - use `characterCode`
+			 */
+			code?: string
+			/**
+			 * Margin between bullet and text
+			 * @since v3.2.1
+			 * @deplrecated v3.3.0 - use `indent`
+			 */
+			marginPt?: number
+			/**
+			 * Number to start with (only applies to type:number)
+			 * @deprecated v3.3.0 - use `numberStartAt`
+			 */
+			startAt?: number
+			/**
+			 * Number type
+			 * @deprecated v3.3.0 - use `numberType`
+			 */
+			style?: string
+		}
 		/**
 		 * Text color
 		 * - `HexColor` or `ThemeColor`
-		 * @example 'FF0000' // red
-		 * @example 'pptxgen.SchemeColor.text1' // Text1 Theme Color
+		 * - MS-PPT > Format Shape > Text Options > Text Fill & Outline > Text Fill > Color
+		 * @example 'FF0000' // hex color (red)
+		 * @example pptx.SchemeColor.text1 // Theme color (Text1)
 		 */
 		color?: Color
 		/**
@@ -1197,11 +1209,33 @@ declare namespace PptxGenJS {
 		 */
 		lang?: string
 		/**
+		 * Add a soft line-break (shift+enter) before line text content
+		 * @default false
+		 * @since v3.5.0
+		 */
+		softBreakBefore?: boolean
+		/**
 		 * tab stops
 		 * - PowerPoint: Paragraph > Tabs > Tab stop position
 		 * @example [{ position:1 }, { position:3 }] // Set first tab stop to 1 inch, set second tab stop to 3 inches
 		 */
-		tabStops?: { position: number; alignment?: 'l' | 'r' | 'ctr' | 'dec' }[]
+		tabStops?: Array<{ position: number, alignment?: 'l' | 'r' | 'ctr' | 'dec' }>
+		/**
+		 * text direction
+		 * `horz` = horizontal
+		 * `vert` = rotate 90^
+		 * `vert270` = rotate 270^
+		 * `wordArtVert` = stacked
+		 * @default 'horz'
+		 */
+		textDirection?: 'horz' | 'vert' | 'vert270' | 'wordArtVert'
+		/**
+		 * Transparency (percent)
+		 * - MS-PPT > Format Shape > Text Options > Text Fill & Outline > Text Fill > Transparency
+		 * - range: 0-100
+		 * @default 0
+		 */
+		transparency?: number
 		/**
 		 * underline properties
 		 * - PowerPoint: Font > Color & Underline > Underline Style/Underline Color
@@ -1209,23 +1243,23 @@ declare namespace PptxGenJS {
 		 */
 		underline?: {
 			style?:
-				| 'dash'
-				| 'dashHeavy'
-				| 'dashLong'
-				| 'dashLongHeavy'
-				| 'dbl'
-				| 'dotDash'
-				| 'dotDashHeave'
-				| 'dotDotDash'
-				| 'dotDotDashHeavy'
-				| 'dotted'
-				| 'dottedHeavy'
-				| 'heavy'
-				| 'none'
-				| 'sng'
-				| 'wavy'
-				| 'wavyDbl'
-				| 'wavyHeavy'
+			| 'dash'
+			| 'dashHeavy'
+			| 'dashLong'
+			| 'dashLongHeavy'
+			| 'dbl'
+			| 'dotDash'
+			| 'dotDashHeave'
+			| 'dotDotDash'
+			| 'dotDotDashHeavy'
+			| 'dotted'
+			| 'dottedHeavy'
+			| 'heavy'
+			| 'none'
+			| 'sng'
+			| 'wavy'
+			| 'wavyDbl'
+			| 'wavyHeavy'
 			color?: Color
 		}
 		/**
@@ -1234,11 +1268,44 @@ declare namespace PptxGenJS {
 		 */
 		valign?: VAlign
 	}
+	export interface PlaceholderProps extends PositionProps, TextBaseProps {
+		name: string
+		type: PLACEHOLDER_TYPE
+		/**
+		 * margin (points)
+		 */
+		margin?: Margin
+	}
+	export interface ObjectNameProps {
+		/**
+		 * Object name
+		 * - used instead of default "Object N" name
+		 * - PowerPoint: Home > Arrange > Selection Pane...
+		 * @since v3.10.0
+		 * @default 'Object 1'
+		 * @example 'Antenna Design 9'
+		 */
+		objectName?: string
+	}
+	export interface ThemeProps {
+		/**
+		 * Headings font face name
+		 * @example 'Arial Narrow'
+		 * @default 'Calibri Light'
+		 */
+		headFontFace?: string
+		/**
+		 * Body font face name
+		 * @example 'Arial'
+		 * @default 'Calibri'
+		 */
+		bodyFontFace?: string
+	}
 
 	// image / media ==================================================================================
 	export type MediaType = 'audio' | 'online' | 'video'
 
-	export interface ImageProps extends PositionProps, DataOrPathProps {
+	export interface ImageProps extends PositionProps, DataOrPathProps, ObjectNameProps {
 		/**
 		 * Alt Text value ("How would you describe this object and its contents to someone who is blind?")
 		 * - PowerPoint: [right-click on an image] > "Edit Alt Text..."
@@ -1275,6 +1342,13 @@ declare namespace PptxGenJS {
 		 */
 		rounding?: boolean
 		/**
+		 * Shadow Props
+		 * - MS-PPT > Format Picture > Shadow
+		 * @example
+		 * { type: 'outer', color: '000000', opacity: 0.5, blur: 20,  offset: 20, angle: 270 }
+		 */
+		shadow?: ShadowProps
+		/**
 		 * Image sizing options
 		 */
 		sizing?: {
@@ -1284,36 +1358,67 @@ declare namespace PptxGenJS {
 			type: 'contain' | 'cover' | 'crop'
 			/**
 			 * Image width
+			 * - inches or percentage
+			 * @example 10.25 // position in inches
+			 * @example '75%' // position as percentage of slide size
 			 */
-			w: number
+			w: Coord
 			/**
 			 * Image height
+			 * - inches or percentage
+			 * @example 10.25 // position in inches
+			 * @example '75%' // position as percentage of slide size
 			 */
-			h: number
+			h: Coord
 			/**
-			 * Area horizontal position related to the image
-			 * - Values: 0-n
+			 * Offset from left to crop image
 			 * - `crop` only
+			 * - inches or percentage
+			 * @example 10.25 // position in inches
+			 * @example '75%' // position as percentage of slide size
 			 */
-			x?: number
+			x?: Coord
 			/**
-			 * Area vertical position related to the image
-			 * - Values: 0-n
+			 * Offset from top to crop image
 			 * - `crop` only
+			 * - inches or percentage
+			 * @example 10.25 // position in inches
+			 * @example '75%' // position as percentage of slide size
 			 */
-			y?: number
+			y?: Coord
 		}
+		/**
+		 * Transparency (percent)
+		 * - MS-PPT > Format Picture > Picture > Picture Transparency > Transparency
+		 * - range: 0-100
+		 * @default 0
+		 * @example 25 // 25% transparent
+		 */
+		transparency?: number
 	}
 	/**
 	 * Add media (audio/video) to slide
 	 * @requires either `link` or `path`
 	 */
-	export interface MediaProps extends PositionProps, DataOrPathProps {
+	export interface MediaProps extends PositionProps, DataOrPathProps, ObjectNameProps {
 		/**
 		 * Media type
 		 * - Use 'online' to embed a YouTube video (only supported in recent versions of PowerPoint)
 		 */
 		type: MediaType
+		/**
+		 * Cover image
+		 * @since 3.9.0
+		 * @default "play button" image, gray background
+		 */
+		cover?: string
+		/**
+		 * media file extension
+		 * - use when the media file path does not already have an extension, ex: "/folder/SomeSong"
+		 * @since 3.9.0
+		 * @default extension from file provided
+		 */
+		extn?: string
 		/**
 		 * video embed link
 		 * - works with YouTube
@@ -1331,7 +1436,7 @@ declare namespace PptxGenJS {
 
 	// shapes =========================================================================================
 
-	export interface ShapeProps extends PositionProps {
+	export interface ShapeProps extends PositionProps, ObjectNameProps {
 		/**
 		 * Horizontal alignment
 		 * @default 'left'
@@ -1355,9 +1460,9 @@ declare namespace PptxGenJS {
 		arcThicknessRatio?: number
 		/**
 		 * Shape fill color properties
-		 * @example { color:'FF0000' } // hex string (red)
-		 * @example { color:'pptx.SchemeColor.accent1' } // theme color Accent1
-		 * @example { color:'0088CC', transparency:50 } // 50% transparent color
+		 * @example { color:'FF0000' } // hex color (red)
+		 * @example { color:'0088CC', transparency:50 } // hex color, 50% transparent
+		 * @example { color:pptx.SchemeColor.accent1 } // Theme color Accent1
 		 */
 		fill?: ShapeFillProps
 		/**
@@ -1390,10 +1495,10 @@ declare namespace PptxGenJS {
 		 * @example [{ x: 0, y: 0 }, { x: 10, y: 10 }] // draw a line between those two points
 		 */
 		points?: Array<
-			| { x: Coord; y: Coord; moveTo?: boolean }
-			| { x: Coord; y: Coord; curve: { type: 'arc'; hR: Coord; wR: Coord; stAng: number; swAng: number } }
-			| { x: Coord; y: Coord; curve: { type: 'cubic'; x1: Coord; y1: Coord; x2: Coord; y2: Coord } }
-			| { x: Coord; y: Coord; curve: { type: 'quadratic'; x1: Coord; y1: Coord } }
+			| { x: Coord, y: Coord, moveTo?: boolean }
+			| { x: Coord, y: Coord, curve: { type: 'arc', hR: Coord, wR: Coord, stAng: number, swAng: number } }
+			| { x: Coord, y: Coord, curve: { type: 'cubic', x1: Coord, y1: Coord, x2: Coord, y2: Coord } }
+			| { x: Coord, y: Coord, curve: { type: 'quadratic', x1: Coord, y1: Coord } }
 			| { close: true }
 		>
 		/**
@@ -1414,54 +1519,55 @@ declare namespace PptxGenJS {
 		 * TODO: need new demo.js entry for shape shadow
 		 */
 		shadow?: ShadowProps
-		/**
-		 * Shape name
-		 * - used instead of default "Shape N" name
-		 * @since v3.3.0
-		 * @example 'Antenna Design 9'
-		 */
-		shapeName?: string
 
 		/**
-		 * @depreacted v3.3.0
+		 * @deprecated v3.3.0
 		 */
 		lineSize?: number
 		/**
-		 * @depreacted v3.3.0
+		 * @deprecated v3.3.0
 		 */
 		lineDash?: 'dash' | 'dashDot' | 'lgDash' | 'lgDashDot' | 'lgDashDotDot' | 'solid' | 'sysDash' | 'sysDot'
 		/**
-		 * @depreacted v3.3.0
+		 * @deprecated v3.3.0
 		 */
 		lineHead?: 'arrow' | 'diamond' | 'none' | 'oval' | 'stealth' | 'triangle'
 		/**
-		 * @depreacted v3.3.0
+		 * @deprecated v3.3.0
 		 */
 		lineTail?: 'arrow' | 'diamond' | 'none' | 'oval' | 'stealth' | 'triangle'
+		/**
+		 * Shape name (used instead of default "Shape N" name)
+		 * @deprecated v3.10.0 - use `objectName`
+		 */
+		shapeName?: string
 	}
 
 	// tables =========================================================================================
 
 	export interface TableToSlidesProps extends TableProps {
 		//_arrObjTabHeadRows?: TableRow[]
-		//_masterSlide?: SlideLayout
+		// _masterSlide?: SlideLayout
 
 		/**
 		 * Add an image to slide(s) created during autopaging
+		 * - `image` prop requires either `path` or `data`
+		 * - see `DataOrPathProps` for details on `image` props
+		 * - see `PositionProps` for details on `options` props
 		 */
-		addImage?: { url: string; x: number; y: number; w?: number; h?: number }
+		addImage?: { image: DataOrPathProps, options: PositionProps }
 		/**
 		 * Add a shape to slide(s) created during autopaging
 		 */
-		addShape?: { shape: any; options: {} }
+		addShape?: { shapeName: SHAPE_NAME, options: ShapeProps }
 		/**
 		 * Add a table to slide(s) created during autopaging
 		 */
-		addTable?: { rows: any[]; options: {} }
+		addTable?: { rows: TableRow[], options: TableProps }
 		/**
 		 * Add a text object to slide(s) created during autopaging
 		 */
-		addText?: { text: any[]; options: {} }
+		addText?: { text: TextProps[], options: TextPropsOptions }
 		/**
 		 * Whether to enable auto-paging
 		 * - auto-paging creates new slides as content overflows a slide
@@ -1551,12 +1657,12 @@ declare namespace PptxGenJS {
 		colspan?: number
 		/**
 		 * Fill color
-		 * @example { color:'FF0000' } // hex string (red)
-		 * @example { color:'pptx.SchemeColor.accent1' } // theme color Accent1
-		 * @example { color:'0088CC', transparency:50 } // 50% transparent color
-		 * @example { type:'solid', color:'0088CC', alpha:50 } // ShapeFillProps object with 50% transparent
+		 * @example { color:'FF0000' } // hex color (red)
+		 * @example { color:'0088CC', transparency:50 } // hex color, 50% transparent
+		 * @example { color:pptx.SchemeColor.accent1 } // theme color Accent1
 		 */
 		fill?: ShapeFillProps
+		hyperlink?: HyperlinkProps
 		/**
 		 * Cell margin (inches)
 		 * @default 0
@@ -1567,7 +1673,7 @@ declare namespace PptxGenJS {
 		 */
 		rowspan?: number
 	}
-	export interface TableProps extends PositionProps, TextBaseProps {
+	export interface TableProps extends PositionProps, TextBaseProps, ObjectNameProps {
 		//_arrObjTabHeadRows?: TableRow[]
 
 		/**
@@ -1629,9 +1735,9 @@ declare namespace PptxGenJS {
 		colW?: number | number[]
 		/**
 		 * Cell background color
-		 * @example { color:'FF0000' } // hex string (red)
-		 * @example { color:'pptx.SchemeColor.accent1' } // theme color Accent1
-		 * @example { color:'0088CC', transparency:50 } // 50% transparent color
+		 * @example { color:'FF0000' } // hex color (red)
+		 * @example { color:'0088CC', transparency:50 } // hex color, 50% transparent
+		 * @example { color:pptx.SchemeColor.accent1 } // theme color Accent1
 		 */
 		fill?: ShapeFillProps
 		/**
@@ -1686,7 +1792,7 @@ declare namespace PptxGenJS {
 		size: number
 	}
 
-	export interface TextPropsOptions extends PositionProps, DataOrPathProps, TextBaseProps {
+	export interface TextPropsOptions extends PositionProps, DataOrPathProps, TextBaseProps, ObjectNameProps {
 		baseline?: number
 		/**
 		 * Character spacing
@@ -1710,9 +1816,9 @@ declare namespace PptxGenJS {
 		fit?: 'none' | 'shrink' | 'resize'
 		/**
 		 * Shape fill
-		 * @example { color:'FF0000' } // hex string (red)
-		 * @example { color:'pptx.SchemeColor.accent1' } // theme color Accent1
-		 * @example { color:'0088CC', transparency:50 } // 50% transparent color
+		 * @example { color:'FF0000' } // hex color (red)
+		 * @example { color:'0088CC', transparency:50 } // hex color, 50% transparent
+		 * @example { color:pptx.SchemeColor.accent1 } // theme color Accent1
 		 */
 		fill?: ShapeFillProps
 		/**
@@ -1728,7 +1834,6 @@ declare namespace PptxGenJS {
 		glow?: TextGlowProps
 		hyperlink?: HyperlinkProps
 		indentLevel?: number
-		inset?: number
 		isTextBox?: boolean
 		line?: ShapeLineProps
 		/**
@@ -1745,8 +1850,17 @@ declare namespace PptxGenJS {
 		 * @since v3.5.0
 		 */
 		lineSpacingMultiple?: number
+		// TODO: [20220219] powerpoint uses inches but library has always been pt... @future @deprecated - update in v4.0? [range: 0.0-22.0]
+		/**
+		 * Margin (points)
+		 * - PowerPoint: Format Shape > Shape Options > Size & Properties > Text Box > Left/Right/Top/Bottom margin
+		 * @default "Normal" margin in PowerPoint [3.5, 7.0, 3.5, 7.0] // (this library sets no value, but PowerPoint defaults to "Normal" [0.05", 0.1", 0.05", 0.1"])
+		 * @example 0 // Top/Right/Bottom/Left margin 0 [0.0" in powerpoint]
+		 * @example 10 // Top/Right/Bottom/Left margin 10 [0.14" in powerpoint]
+		 * @example [10,5,10,5] // Top margin 10, Right margin 5, Bottom margin 10, Left margin 5
+		 */
 		margin?: Margin
-		outline?: { color: Color; size: number }
+		outline?: { color: Color, size: number }
 		paraSpaceAfter?: number
 		paraSpaceBefore?: number
 		placeholder?: string
@@ -1773,6 +1887,10 @@ declare namespace PptxGenJS {
 		strike?: boolean | 'dblStrike' | 'sngStrike'
 		subscript?: boolean
 		superscript?: boolean
+		/**
+		 * Vertical alignment
+		 * @default middle
+		 */
 		valign?: VAlign
 		vert?: 'eaVert' | 'horz' | 'mongolianVert' | 'vert' | 'vert270' | 'wordArtVert' | 'wordArtVertRtl'
 		/**
@@ -1783,7 +1901,7 @@ declare namespace PptxGenJS {
 		wrap?: boolean
 
 		/**
-		 * Whather "Fit to Shape?" is enabled
+		 * Whether "Fit to Shape?" is enabled
 		 * @deprecated v3.3.0 - use `fit`
 		 */
 		autoFit?: boolean
@@ -1792,6 +1910,11 @@ declare namespace PptxGenJS {
 		 * @deprecated v3.3.0 - use `fit`
 		 */
 		shrinkText?: boolean
+		/**
+		 * Inset
+		 * @deprecated v3.10.0 - use `margin`
+		 */
+		inset?: number
 		/**
 		 * Dash type
 		 * @deprecated v3.3.0 - use `line.dashType`
@@ -1816,12 +1939,42 @@ declare namespace PptxGenJS {
 	}
 
 	// charts =========================================================================================
+	// FUTURE: BREAKING-CHANGE: (soln: use `OptsDataLabelPosition|string` until 3.5/4.0)
+	/*
+	export interface OptsDataLabelPosition {
+		pie: 'ctr' | 'inEnd' | 'outEnd' | 'bestFit'
+		scatter: 'b' | 'ctr' | 'l' | 'r' | 't'
+		// TODO: add all othere chart types
+	}
+	*/
+
 	export type ChartAxisTickMark = 'none' | 'inside' | 'outside' | 'cross'
+	export type ChartLineCap = 'flat' | 'round' | 'square'
+
 	export interface OptsChartData {
-		index?: number
-		labels?: string[]
+		//_dataIndex?: number
+
+		/**
+		 * category labels
+		 * @example ['Year 2000', 'Year 2010', 'Year 2020'] // single-level category axes labels
+		 * @example [['Year 2000', 'Year 2010', 'Year 2020'], ['Decades', '', '']] // multi-level category axes labels
+		 * @since `labels` string[][] type added v3.11.0
+		 */
+		labels?: string[] | string[][]
+		/**
+		 * series name
+		 * @example 'Locations'
+		 */
 		name?: string
+		/**
+		 * bubble sizes
+		 * @example [5, 1, 5, 1]
+		 */
 		sizes?: number[]
+		/**
+		 * category values
+		 * @example [2000, 2010, 2020]
+		 */
 		values?: number[]
 		/**
 		 * Override `chartColors`
@@ -1829,6 +1982,12 @@ declare namespace PptxGenJS {
 		//color?: string // TODO: WIP: (Pull #727)
 	}
 	export interface OptsChartGridLine {
+		/**
+		 * MS-PPT > Chart format > Format Major Gridlines > Line > Cap type
+		 * - line cap type
+		 * @default flat
+		 */
+		cap?: ChartLineCap
 		/**
 		 * Gridline color (hex)
 		 * @example 'FF3399'
@@ -1843,45 +2002,124 @@ declare namespace PptxGenJS {
 		 */
 		style?: 'solid' | 'dash' | 'dot' | 'none'
 	}
+	// TODO: 202008: chart types remain with predicated with "I" in v3.3.0 (ran out of time!)
 	export interface IChartMulti {
 		type: CHART_NAME
-		data: any[]
-		options: {}
+		data: OptsChartData[]
+		options: IChartOpts
+	}
+	export interface IChartPropsFillLine {
+		/**
+		 * PowerPoint: Format Chart Area/Plot > Border ["Line"]
+		 * @example border: {color: 'FF0000', pt: 1} // hex RGB color, 1 pt line
+		 */
+		border?: BorderProps
+		/**
+		 * PowerPoint: Format Chart Area/Plot Area > Fill
+		 * @example fill: {color: '696969'} // hex RGB color value
+		 * @example fill: {color: pptx.SchemeColor.background2} // Theme color value
+		 * @example fill: {transparency: 50} // 50% transparency
+		 */
+		fill?: ShapeFillProps
+	}
+	export interface IChartAreaProps extends IChartPropsFillLine {
+		/**
+		 * Whether the chart area has rounded corners
+		 * - only applies when either `fill` or `border` is used
+		 * @default true
+		 * @since v3.11
+		 */
+		roundedCorners?: boolean
 	}
 	export interface IChartPropsBase {
 		/**
 		 * Axis position
 		 */
 		axisPos?: 'b' | 'l' | 'r' | 't'
-		border?: BorderProps
 		chartColors?: HexColor[]
 		/**
-		 * opacity (0.0 - 1.0)
-		 * @example 0.5 // 50% opaque
+		 * opacity (0 - 100)
+		 * @example 50 // 50% opaque
 		 */
 		chartColorsOpacity?: number
 		dataBorder?: BorderProps
 		displayBlanksAs?: string
-		fill?: HexColor
-		invertedColors?: string
+		invertedColors?: HexColor[]
 		lang?: string
 		layout?: PositionProps
 		shadow?: ShadowProps
+		/**
+		 * @default false
+		 */
 		showLabel?: boolean
 		showLeaderLines?: boolean
+		/**
+		 * @default false
+		 */
 		showLegend?: boolean
+		/**
+		 * @default false
+		 */
 		showPercent?: boolean
+		/**
+		 * @default false
+		 */
+		showSerName?: boolean
+		/**
+		 * @default false
+		 */
 		showTitle?: boolean
+		/**
+		 * @default false
+		 */
 		showValue?: boolean
 		/**
-		 * 3D perspecitve
-		 * - range: 0-100
+		 * 3D Perspecitve
+		 * - range: 0-120
 		 * @default 30
 		 */
 		v3DPerspective?: number
+		/**
+		 * Right Angle Axes
+		 * - Shows chart from first-person perspective
+		 * - Overrides `v3DPerspective` when true
+		 * - PowerPoint: Chart Options > 3-D Rotation
+		 * @default false
+		 */
 		v3DRAngAx?: boolean
+		/**
+		 * X Rotation
+		 * - PowerPoint: Chart Options > 3-D Rotation
+		 * - range: 0-359.9
+		 * @default 30
+		 */
 		v3DRotX?: number
+		/**
+		 * Y Rotation
+		 * - range: 0-359.9
+		 * @default 30
+		 */
 		v3DRotY?: number
+
+		/**
+		 * PowerPoint: Format Chart Area (Fill & Border/Line)
+		 * @since v3.11
+		 */
+		chartArea?: IChartAreaProps
+		/**
+		 * PowerPoint: Format Plot Area (Fill & Border/Line)
+		 * @since v3.11
+		 */
+		plotArea?: IChartPropsFillLine
+
+		/**
+		 * @deprecated v3.11.0 - use `plotArea.border`
+		 */
+		border?: BorderProps
+		/**
+		 * @deprecated v3.11.0 - use `plotArea.fill`
+		 */
+		fill?: HexColor
 	}
 	export interface IChartPropsAxisCat {
 		/**
@@ -1889,6 +2127,7 @@ declare namespace PptxGenJS {
 		 */
 		catAxes?: IChartPropsAxisCat[]
 		catAxisBaseTimeUnit?: string
+		catAxisCrossesAt?: number | 'autoZero'
 		catAxisHidden?: boolean
 		catAxisLabelColor?: string
 		catAxisLabelFontBold?: boolean
@@ -1908,8 +2147,10 @@ declare namespace PptxGenJS {
 		catAxisMaxVal?: number
 		catAxisMinorTickMark?: ChartAxisTickMark
 		catAxisMinorTimeUnit?: string
-		catAxisMinorUnit?: string
+		catAxisMinorUnit?: number
 		catAxisMinVal?: number
+		/** @since v3.11.0 */
+		catAxisMultiLevelLabels?: boolean
 		catAxisOrientation?: 'minMax'
 		catAxisTitle?: string
 		catAxisTitleColor?: string
@@ -1962,7 +2203,7 @@ declare namespace PptxGenJS {
 		 * Multi-Chart prop: array of val axes
 		 */
 		valAxes?: IChartPropsAxisVal[]
-		valAxisCrossesAt?: string | number
+		valAxisCrossesAt?: number | 'autoZero'
 		valAxisDisplayUnit?: 'billions' | 'hundredMillions' | 'hundreds' | 'hundredThousands' | 'millions' | 'tenMillions' | 'tenThousands' | 'thousands' | 'trillions'
 		valAxisDisplayUnitLabel?: boolean
 		valAxisHidden?: boolean
@@ -2010,20 +2251,77 @@ declare namespace PptxGenJS {
 		bar3DShape?: string
 		barDir?: string
 		barGapDepthPct?: number
+		/**
+		 * MS-PPT > Format chart > Format Data Point > Series Options >  "Gap Width"
+		 * - width (percent)
+		 * - range: `0`-`500`
+		 * @default 150
+		 */
 		barGapWidthPct?: number
 		barGrouping?: string
+		/**
+		 * MS-PPT > Format chart > Format Data Point > Series Options >  "Series Overlap"
+		 * - overlap (percent)
+		 * - range: `-100`-`100`
+		 * @since v3.9.0
+		 * @default 0
+		 */
+		barOverlapPct?: number
 	}
 	export interface IChartPropsChartDoughnut {
 		dataNoEffects?: boolean
 		holeSize?: number
 	}
 	export interface IChartPropsChartLine {
+		/**
+		 * MS-PPT > Chart format > Format Data Series > Line > Cap type
+		 * - line cap type
+		 * @default flat
+		 */
+		lineCap?: ChartLineCap
+		/**
+		 * MS-PPT > Chart format > Format Data Series > Marker Options > Built-in > Type
+		 * - line dash type
+		 * @default solid
+		 */
 		lineDash?: 'dash' | 'dashDot' | 'lgDash' | 'lgDashDot' | 'lgDashDotDot' | 'solid' | 'sysDash' | 'sysDot'
+		/**
+		 * MS-PPT > Chart format > Format Data Series > Marker Options > Built-in > Type
+		 * - marker type
+		 * @default circle
+		 */
 		lineDataSymbol?: 'circle' | 'dash' | 'diamond' | 'dot' | 'none' | 'square' | 'triangle'
+		/**
+		 * MS-PPT > Chart format > Format Data Series > [Marker Options] > Border > Color
+		 * - border color
+		 * @default circle
+		 */
 		lineDataSymbolLineColor?: string
+		/**
+		 * MS-PPT > Chart format > Format Data Series > [Marker Options] > Border > Width
+		 * - border width (points)
+		 * @default 0.75
+		 */
 		lineDataSymbolLineSize?: number
+		/**
+		 * MS-PPT > Chart format > Format Data Series > Marker Options > Built-in > Size
+		 * - marker size
+		 * - range: 2-72
+		 * @default 6
+		 */
 		lineDataSymbolSize?: number
+		/**
+		 * MS-PPT > Chart format > Format Data Series > Line > Width
+		 * - line width (points)
+		 * - range: 0-1584
+		 * @default 2
+		 */
 		lineSize?: number
+		/**
+		 * MS-PPT > Chart format > Format Data Series > Line > Smoothed line
+		 * - "Smoothed line"
+		 * @default false
+		 */
 		lineSmooth?: boolean
 	}
 	export interface IChartPropsChartPie {
@@ -2038,7 +2336,12 @@ declare namespace PptxGenJS {
 		firstSliceAng?: number
 	}
 	export interface IChartPropsChartRadar {
-		radarStyle?: 'standard' | 'marker' | 'filled'
+		/**
+		 * MS-PPT > Chart Type > Waterfall
+		 * - radar chart type
+		 * @default standard
+		 */
+		radarStyle?: 'standard' | 'marker' | 'filled' // TODO: convert to 'radar'|'markers'|'filled' in 4.0 (verbatim with PPT app UI)
 	}
 	export interface IChartPropsDataLabel {
 		dataLabelBkgrdColors?: boolean
@@ -2067,6 +2370,10 @@ declare namespace PptxGenJS {
 		 * @example '$0.00' // shows values as '$0.00'
 		 */
 		dataTableFormatCode?: string
+		/**
+		 * Whether to show a data table adjacent to the chart
+		 * @default false
+		 */
 		showDataTable?: boolean
 		showDataTableHorzBorder?: boolean
 		showDataTableKeys?: boolean
@@ -2086,25 +2393,26 @@ declare namespace PptxGenJS {
 		titleColor?: string
 		titleFontFace?: string
 		titleFontSize?: number
-		titlePos?: { x: number; y: number }
+		titlePos?: { x: number, y: number }
 		titleRotate?: number
 	}
 	export interface IChartOpts
 		extends IChartPropsAxisCat,
-			IChartPropsAxisSer,
-			IChartPropsAxisVal,
-			IChartPropsBase,
-			IChartPropsChartBar,
-			IChartPropsChartDoughnut,
-			IChartPropsChartLine,
-			IChartPropsChartPie,
-			IChartPropsChartRadar,
-			IChartPropsDataLabel,
-			IChartPropsDataTable,
-			IChartPropsLegend,
-			IChartPropsTitle,
-			OptsChartGridLine,
-			PositionProps {
+		IChartPropsAxisSer,
+		IChartPropsAxisVal,
+		IChartPropsBase,
+		IChartPropsChartBar,
+		IChartPropsChartDoughnut,
+		IChartPropsChartLine,
+		IChartPropsChartPie,
+		IChartPropsChartRadar,
+		IChartPropsDataLabel,
+		IChartPropsDataTable,
+		IChartPropsLegend,
+		IChartPropsTitle,
+		ObjectNameProps,
+		OptsChartGridLine,
+		PositionProps {
 		/**
 		 * Alt Text value ("How would you describe this object and its contents to someone who is blind?")
 		 * - PowerPoint: [right-click on a chart] > "Edit Alt Text..."
@@ -2115,10 +2423,11 @@ declare namespace PptxGenJS {
 		type: CHART_NAME | IChartMulti[]
 		opts: IChartOpts
 		data: OptsChartData[]
-		rId: number
-		Target: string
-		globalId: number
-		fileName: string
+		// internal below
+		//rId: number
+		//Target: string
+		//globalId: number
+		//fileName: string
 	}
 
 	// Core
@@ -2147,6 +2456,9 @@ declare namespace PptxGenJS {
 		fileName?: string
 	}
 	export interface SectionProps {
+		//_type: 'user' | 'default'
+		//_slides: PresSlide[]
+
 		/**
 		 * Section title
 		 */
@@ -2158,6 +2470,9 @@ declare namespace PptxGenJS {
 		order?: number
 	}
 	export interface PresLayout {
+		//_sizeW?: number
+		//_sizeH?: number
+
 		/**
 		 * Layout Name
 		 * @example 'LAYOUT_WIDE'
@@ -2167,33 +2482,34 @@ declare namespace PptxGenJS {
 		height: number
 	}
 	export interface SlideNumberProps extends PositionProps, TextBaseProps {
-		margin?: Margin
+		/**
+		 * margin (points)
+		 */
+		margin?: Margin // TODO: convert to inches in 4.0 (valid values are 0-22)
 	}
 	export interface SlideMasterProps {
 		/**
 		 * Unique name for this master
 		 */
 		title: string
-		margin?: Margin
 		background?: BackgroundProps
-		objects?: (
-			| { chart: {} }
-			| { image: {} }
-			| { line: {} }
-			| { rect: {} }
+		margin?: Margin
+		slideNumber?: SlideNumberProps
+		objects?: Array<| { chart: IChartOpts }
+			| { image: ImageProps }
+			| { line: ShapeProps }
+			| { rect: ShapeProps }
 			| { text: TextProps }
 			| {
-					placeholder: {
-						options: PlaceholderProps
-						/**
-						 * Text to be shown in placeholder (shown until user focuses textbox or adds text)
-						 * - Leave blank to have powerpoint show default phrase (ex: "Click to add title")
-						 */
-						text?: string
-					}
-			  }
-		)[]
-		slideNumber?: SlideNumberProps
+				placeholder: {
+					options: PlaceholderProps
+					/**
+					 * Text to be shown in placeholder (shown until user focuses textbox or adds text)
+					 * - Leave blank to have powerpoint show default phrase (ex: "Click to add title")
+					 */
+					text?: string
+				}
+			}>
 
 		/**
 		 * @deprecated v3.3.0 - use `background`
@@ -2201,6 +2517,9 @@ declare namespace PptxGenJS {
 		bkgd?: string | BackgroundProps
 	}
 	export interface ObjectOptions extends ImageProps, PositionProps, ShapeProps, TableCellProps, TextPropsOptions {
+		//_placeholderIdx?: number
+		//_placeholderType?: PLACEHOLDER_TYPE
+
 		cx?: Coord
 		cy?: Coord
 		margin?: Margin
@@ -2217,12 +2536,12 @@ declare namespace PptxGenJS {
 		addText: Function
 
 		/**
-		 * Background color or image (`Color` | `path` | `data`)
-		 * @example {color: 'FF3399'} - hex fill color
-		 * @example {color: 'FF3399', transparency:50} - hex fill color with transparency of 50%
-		 * @example {path: 'https://onedrives.com/myimg.png`} - retrieve image via URL
-		 * @example {path: '/home/gitbrent/images/myimg.png`} - retrieve image via local path
-		 * @example {data: 'image/png;base64,iVtDaDrF[...]='} - base64 string
+		 * Background color or image (`color` | `path` | `data`)
+		 * @example { color: 'FF3399' } - hex color
+		 * @example { color: 'FF3399', transparency:50 } - hex color with 50% transparency
+		 * @example { path: 'https://onedrives.com/myimg.png` } - retrieve image via URL
+		 * @example { path: '/home/gitbrent/images/myimg.png` } - retrieve image via local path
+		 * @example { data: 'image/png;base64,iVtDaDrF[...]=' } - base64 string
 		 * @since v3.3.0
 		 */
 		background?: BackgroundProps
@@ -2263,6 +2582,7 @@ declare namespace PptxGenJS {
 		 */
 		rtlMode: boolean
 		subject: string
+		theme: ThemeProps
 		title: string
 	}
 
@@ -2272,12 +2592,12 @@ declare namespace PptxGenJS {
 	 */
 	export class Slide {
 		/**
-		 * Background color or image (`Color` | `path` | `data`)
-		 * @example {color: 'FF3399'} - hex fill color
-		 * @example {color: 'FF3399', transparency: 50} - hex fill color with transparency of 50%
-		 * @example {path: 'https://onedrives.com/myimg.png`} - retrieve image via URL
-		 * @example {path: '/home/gitbrent/images/myimg.png`} - retrieve image via local path
-		 * @example {data: 'image/png;base64,iVtDaDrF[...]='} - base64 string
+		 * Background color or image (`color` | `path` | `data`)
+		 * @example { color: 'FF3399' } - hex color
+		 * @example { color: 'FF3399', transparency:50 } - hex color with 50% transparency
+		 * @example { path: 'https://onedrives.com/myimg.png` } - retrieve image via URL
+		 * @example { path: '/home/gitbrent/images/myimg.png` } - retrieve image via local path
+		 * @example { data: 'image/png;base64,iVtDaDrF[...]=' } - base64 string
 		 * @since 3.3.0
 		 */
 		background: BackgroundProps
@@ -2296,6 +2616,10 @@ declare namespace PptxGenJS {
 		 * Slide number options
 		 */
 		slideNumber: SlideNumberProps
+		/**
+		 * New slides added by an auto paged table
+		 */
+		newAutoPagedSlides: PresSlide[]
 		/**
 		 * Add chart to Slide
 		 * @param {CHART_NAME|IChartMulti[]} type - chart type
