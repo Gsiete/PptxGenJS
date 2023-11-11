@@ -422,7 +422,6 @@ export function addImageDefinition (target: PresSlide, opt: ImageProps): void {
 			.split('#')[0] || 'png'
 	).toLowerCase()
 
-
 	// However, pre-encoded images can be whatever mime-type they want (and good for them!)
 	if (strImageData && /image\/(\w+);/.exec(strImageData) && /image\/(\w+);/.exec(strImageData).length > 0) {
 		strImgExtn = /image\/(\w+);/.exec(strImageData)[1]

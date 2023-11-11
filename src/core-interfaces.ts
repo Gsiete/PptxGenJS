@@ -1328,7 +1328,7 @@ export interface IChartPropsAxisCat {
 	 */
 	catAxes?: IChartPropsAxisCat[]
 	catAxisBaseTimeUnit?: string
-	catAxisCrossesAt?: number | 'autoZero'
+	catAxisCrossesAt?: number | 'max' | 'min' | 'autoZero'
 	catAxisHidden?: boolean
 	catAxisLabelColor?: string
 	catAxisLabelFontBold?: boolean
@@ -1404,7 +1404,7 @@ export interface IChartPropsAxisVal {
 	 * Multi-Chart prop: array of val axes
 	 */
 	valAxes?: IChartPropsAxisVal[]
-	valAxisCrossesAt?: number | 'autoZero'
+	valAxisCrossesAt?: number | 'max' | 'min' | 'autoZero'
 	valAxisDisplayUnit?: 'billions' | 'hundredMillions' | 'hundreds' | 'hundredThousands' | 'millions' | 'tenMillions' | 'tenThousands' | 'thousands' | 'trillions'
 	valAxisDisplayUnitLabel?: boolean
 	valAxisHidden?: boolean
@@ -1563,7 +1563,7 @@ export interface IChartPropsDataLabel {
 	dataLabelFormatCode?: string
 	dataLabelFormatScatter?: 'custom' | 'customXY' | 'XY'
 	dataLabelPosition?: 'b' | 'bestFit' | 'ctr' | 'l' | 'r' | 't' | 'inEnd' | 'outEnd'
-	dataLabelPositions?: ('b' | 'bestFit' | 'ctr' | 'l' | 'r' | 't' | 'inEnd' | 'outEnd')[]
+	dataLabelPositions?: Array<'b' | 'bestFit' | 'ctr' | 'l' | 'r' | 't' | 'inEnd' | 'outEnd'>
 }
 export interface IChartPropsDataTable {
 	dataTableFontSize?: number
